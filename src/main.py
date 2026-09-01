@@ -5,9 +5,9 @@ from mooneazy.scripts.scalper import get_scalping_signals
 
 def main(context):
     errors = {}
-    errors['scalper_errors'] = scalper_errors or None
     latest_signals = []
     signals, scalper_errors = get_scalping_signals()
+    errors['scalper_errors'] = scalper_errors or None
     if signals:
         try:
             send_push_notifications(signals)
