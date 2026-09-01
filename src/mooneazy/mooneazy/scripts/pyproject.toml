@@ -1,0 +1,19 @@
+[project]
+name = "scripts"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "candles-api",
+    "pullback-strategy",
+    "breakout-strategy",
+    "ultimate-setups"
+]
+
+[tool.uv.sources]
+candles-api = { path = "../candles_api", editable = true }
+pullback-strategy = { path = "../pullback_strategy", editable=true }
+ultimate-setups = { path = "../ultimate_setups", editable=true }
+breakout-strategy = { path = "../breakout_strategy", editable=true }
+

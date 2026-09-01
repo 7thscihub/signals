@@ -1,0 +1,23 @@
+[project]
+name = "signals"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "mooneazy",
+]
+dependencies = [
+    "appwrite>=23.0.0,<24.0.0",
+    "mooneazy"
+]
+
+[tool.uv.sources]
+mooneazy = { workspace = true }
+
+[tool.uv.workspace]
+members = [
+    "src/mooneazy",
+]
+
+
