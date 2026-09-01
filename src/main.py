@@ -16,10 +16,10 @@ def main(context):
             context.log(e)
     try:
         # update signals database and return latest_signals
-        db_signals, errors = update_signals(signals)
+        db_signals, db_errors = update_signals(signals)
         if db_signals:
             latest_signals = db_signals
-        errors['updata_signals_errors'] = errors or None
+        errors['updata_signals_errors'] = db_errors or None
 
     except Exception as e:
         errors['db_errors'] = f"ERROR ADDING SIGNALS TO DB \n{e}"
