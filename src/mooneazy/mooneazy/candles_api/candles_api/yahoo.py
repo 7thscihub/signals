@@ -2,7 +2,7 @@ import time
 import json
 from typing import Tuple, List, Dict
 import requests
-from mooneazy.candles_api.candles_api import api_errors
+from . import api_errors
 
 
 def get_start_time_end_time(parameters: dict) -> Tuple[str, str, int, int, int]:

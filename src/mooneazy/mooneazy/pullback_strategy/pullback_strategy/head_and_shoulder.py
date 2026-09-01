@@ -1,6 +1,6 @@
-from mooneazy.pullback_strategy.pullback_strategy import pivots
-from mooneazy.pullback_strategy.pullback_strategy import fakeouts
-from mooneazy.pullback_strategy.pullback_strategy import trading
+from . import pivots
+from . import fakeouts
+from . import trading
 
 
 def is_btw(test_candle, left_candle, right_candle):

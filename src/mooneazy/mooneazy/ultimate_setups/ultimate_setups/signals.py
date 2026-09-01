@@ -1,6 +1,6 @@
-from .mooneazy.ultimate_setups.ultimate_setups.strategies.ultimate_setups import UltimateSetups
-from .mooneazy.ultimate_setups.ultimate_setups.core.indicators import EmaCross
-from .mooneazy.ultimate_setups.ultimate_setups.core.trading import get_trade
+from ..strategies.ultimate_setups import UltimateSetups
+from ..core.indicators import EmaCross
+from ..core.trading import get_trade
 
 
 def get_ult_signal(

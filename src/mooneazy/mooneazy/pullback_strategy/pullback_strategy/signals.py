@@ -1,6 +1,6 @@
-from mooneazy.pullback_strategy.pullback_strategy.pullback import get_valid_pullback_level
-from mooneazy.pullback_strategy.pullback_strategy.fakeouts import get_active_signals
-from mooneazy.pullback_strategy.pullback_strategy.trading import get_trade
+from . import get_valid_pullback_level
+from . import get_active_signals
+from . import get_trade
 
 
 def make_trade_signal(signal, tp_rrrs, sl_padding) -> dict:

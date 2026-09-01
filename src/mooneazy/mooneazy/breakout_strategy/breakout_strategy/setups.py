@@ -3,9 +3,9 @@ Fetches candle stick data from candles api using parameters from the
 config file. Applys the signals algorithms and trade setup algoriths 
 to the candles
 '''
-from mooneazy.candles_api.candles_api import api
-from mooneazy.breakout_strategy.breakout_strategy import config
-from mooneazy.breakout_strategy.breakout_strategy import signals
+from ...candles_api.candles_api import api
+from . import config
+from . import signals
 
 
 def get_candles(symbol, interval, limit):

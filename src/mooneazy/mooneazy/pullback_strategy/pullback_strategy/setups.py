@@ -1,6 +1,6 @@
-from mooneazy.candles_api.candles_api import api
-from mooneazy.pullback_strategy.pullback_strategy import signals
-from mooneazy.pullback_strategy.pullback_strategy import config
+from . import api
+from . import signals
+from . import config
 
 def get_setup_signal(symbol):
     HTF_INTERVAL, HTF_LIMIT = config.HTF_ARGS

@@ -1,4 +1,4 @@
-from mooneazy.ultimate_setups.ultimate_setups.core import util
+from . import util
 
 
 def get_bullish_fa(candles, level, fo_lookback):

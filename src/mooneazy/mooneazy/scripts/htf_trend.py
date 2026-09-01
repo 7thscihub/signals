@@ -1,7 +1,7 @@
 
-from mooneazy.breakout_strategy.breakout_strategy.emas import EmaCross
-from mooneazy.breakout_strategy.breakout_strategy import errors
-from mooneazy.candles_api.candles_api import api
+from ..breakout_strategy.breakout_strategy.emas import EmaCross
+from ..breakout_strategy.breakout_strategy import errors
+from ..candles_api.candles_api import api
 
 def is_bullish_cross(htf_candles, slow_ema_period, fast_ema_period):
     cross = EmaCross(

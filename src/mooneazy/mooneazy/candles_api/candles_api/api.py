@@ -1,7 +1,7 @@
 import json
-from mooneazy.candles_api.candles_api import binance
-from mooneazy.candles_api.candles_api import yahoo
-from mooneazy.candles_api.candles_api import config
+from . import binance
+from . import yahoo
+from . import config
 
 
 def get_candles(parameters: dict = None, supported_symbols: dict[set] = None)->list[dict]:

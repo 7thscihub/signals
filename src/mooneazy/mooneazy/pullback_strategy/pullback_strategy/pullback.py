@@ -1,9 +1,9 @@
 from collections import OrderedDict
-from mooneazy.pullback_strategy.pullback_strategy import util
-from mooneazy.pullback_strategy.pullback_strategy import htf_trend
-from mooneazy.pullback_strategy.pullback_strategy import config
-from mooneazy.pullback_strategy.pullback_strategy import pivots
-from mooneazy.pullback_strategy.pullback_strategy import errors
+from . import util
+from . import htf_trend
+from . import config
+from . import pivots
+from . import errors
 
 
 def get_pivots(trade_candles, lookback_left=None, lookback_right=None):

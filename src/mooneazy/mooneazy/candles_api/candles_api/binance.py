@@ -1,5 +1,6 @@
 import requests
-from mooneazy.candles_api.candles_api import api_errors
+from . import api_errors
+
 
 
 def get_candles_from_params(params: dict)->list[dict]:

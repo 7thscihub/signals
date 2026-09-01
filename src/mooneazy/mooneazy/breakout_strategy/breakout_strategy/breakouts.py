@@ -1,8 +1,9 @@
 import json
-from mooneazy.breakout_strategy.breakout_strategy import breakout
-from mooneazy.breakout_strategy.breakout_strategy.emas import EmaCross
-from mooneazy.breakout_strategy.breakout_strategy.hma import BreakoutHMA
-from mooneazy.breakout_strategy.breakout_strategy import util
+from . import breakout
+from .emas import EmaCross
+from .hma import BreakoutHMA
+from . import util
+
 
 class Breakouts:
     def __init__(self, 

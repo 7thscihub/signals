@@ -1,4 +1,4 @@
-from mooneazy.ultimate_setups.ultimate_setups.core import settings
+from . import settings
 
 
 class Candle(dict):

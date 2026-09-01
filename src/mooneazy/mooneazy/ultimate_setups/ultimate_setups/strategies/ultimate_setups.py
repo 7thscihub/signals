@@ -1,6 +1,6 @@
 from typing import Literal
-from mooneazy.ultimate_setups.ultimate_setups.core.charting import Chart
-from mooneazy.ultimate_setups.ultimate_setups.core import fakeouts, util
+from ..core.charting import Chart
+from ..core import fakeouts, util
 
 
 class UltimateSetups:

@@ -1,10 +1,10 @@
-from mooneazy.candles_api.candles_api import api as candles_api
-from mooneazy.pullback_strategy.pullback_strategy import signals as pullback_signals
-from mooneazy.pullback_strategy.pullback_strategy.head_and_shoulder import HeadAndShoulder
-from mooneazy.breakout_strategy.breakout_strategy import breakouts
-from mooneazy.ultimate_setups.ultimate_setups import signals as ult_signals
-from mooneazy.scripts.config import Configs
-from mooneazy.scripts import htf_trend
+from ..candles_api.candles_api import api as candles_api
+from ..pullback_strategy.pullback_strategy import signals as pullback_signals
+from ..pullback_strategy.pullback_strategy.head_and_shoulder import HeadAndShoulder
+from ..breakout_strategy.breakout_strategy import breakouts
+from ..ultimate_setups.ultimate_setups import signals as ult_signals
+from .config import Configs
+from . import htf_trend
 
 
 class Analyze:

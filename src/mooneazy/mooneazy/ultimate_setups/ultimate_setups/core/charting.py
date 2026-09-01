@@ -1,5 +1,5 @@
-from mooneazy.ultimate_setups.ultimate_setups.core import pivots
-from mooneazy.ultimate_setups.ultimate_setups.core import util
+from . import pivots
+from . import util
 
 
 class Chart:

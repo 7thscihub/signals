@@ -2,7 +2,7 @@ import copy
 import json
 import time
 from datetime import datetime, timezone
-from mooneazy.ultimate_setups.ultimate_setups.core import settings
+from . import settings
 
 
 def get_candles_from_json(file_name):

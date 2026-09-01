@@ -1,4 +1,4 @@
-from mooneazy.breakout_strategy.breakout_strategy.trading import get_trade
+from .trading import get_trade
 
 
 def resolve_level(level):

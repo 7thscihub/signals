@@ -1,8 +1,8 @@
-from .mooneazy.breakout_strategy.breakout_strategy import breakout
-from .mooneazy.breakout_strategy.breakout_strategy.emas import EmaCross
-from .mooneazy.breakout_strategy.breakout_strategy.hma import BreakoutHMA
-from .mooneazy.breakout_strategy.breakout_strategy import signals
-from .mooneazy.backtesting import breakout_util as util
+from ..breakout_strategy.breakout_strategy import breakout
+from ..breakout_strategy.breakout_strategy.emas import EmaCross
+from ..breakout_strategy.breakout_strategy.hma import BreakoutHMA
+from ..breakout_strategy.breakout_strategy import signals
+from ..backtesting import breakout_util as util
 
 
 class Breakouts:
