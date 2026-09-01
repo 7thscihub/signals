@@ -12,11 +12,11 @@ def main(context):
     except Exception as e:
         context.log(traceback.format_exc())
         if signals:
-        try:
-            send_push_notifications(signals)
-        except Exception as e:
-            errors['push_notification_errors'] = e
-            context.log(traceback.format_exc())
+            try:
+                send_push_notifications(signals)
+            except Exception as e:
+                errors['push_notification_errors'] = e
+                context.log(traceback.format_exc())
     try:
         # update signals database and return latest_signals
         db_signals, db_errors = update_signals(signals)
