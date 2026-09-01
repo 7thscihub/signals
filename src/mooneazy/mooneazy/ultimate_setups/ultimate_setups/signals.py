@@ -1,6 +1,6 @@
-from ..strategies.ultimate_setups import UltimateSetups
-from ..core.indicators import EmaCross
-from ..core.trading import get_trade
+from .strategies.ultimate_setups import UltimateSetups
+from .core.indicators import EmaCross
+from .core.trading import get_trade
 
 
 def get_ult_signal(

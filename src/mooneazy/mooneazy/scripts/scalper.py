@@ -1,9 +1,9 @@
 import time
 import traceback
 import json
-from mooneazy.scripts.analysis import get_signals
-from mooneazy.alerts.sounds import play_alert
-from mooneazy.scripts import util
+from .analysis import get_signals
+from ..alerts.sounds import play_alert
+from . import util
 
 ALERT_UPTIME = 90
 
