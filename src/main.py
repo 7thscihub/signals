@@ -4,6 +4,7 @@ import traceback
 from mooneazy.scripts.scalper import get_scalping_signals
 
 def main(context):
+    signals = []
     errors = {}
     latest_signals = []
     try:
@@ -11,12 +12,12 @@ def main(context):
         errors['scalper_errors'] = scalper_errors or None
     except Exception as e:
         context.log(traceback.format_exc())
-        if signals:
-            try:
-                send_push_notifications(signals)
-            except Exception as e:
-                errors['push_notification_errors'] = e
-                context.log(traceback.format_exc())
+    if signals:
+        try:
+            send_push_notifications(signals)
+        except Exception as e:
+            errors['push_notification_errors'] = e
+            context.log(traceback.format_exc())
     try:
         # update signals database and return latest_signals
         db_signals, db_errors = update_signals(signals)
