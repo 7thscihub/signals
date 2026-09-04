@@ -27,12 +27,16 @@ def main(context):
 
     except Exception as e:
         context.log(traceback.format_exc())
-
-    return context.res.json({
-        "signals": latest_signals or signals,
-        "errors": errors if errors else None 
-    })
-
+    try:
+        return context.res.json({
+            "signals": latest_signals or signals,
+            "errors": f"{errors}" if errors else None 
+        })
+    except TypeError as e:
+        context.log(traceback.format_exc())
+        return context.res.json({
+            'errors': "json encoding error"
+        })
 
 
 
