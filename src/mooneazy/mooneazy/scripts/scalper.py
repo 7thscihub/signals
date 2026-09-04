@@ -1,11 +1,18 @@
 import time
+import os
 import traceback
 import json
 from .analysis import get_signals
-from ..alerts.sounds import play_alert
 from . import util
 
 ALERT_UPTIME = 90
+
+def ring():
+    environment = os.environ.get("ENVIRONMENT", None)
+    if environment == 'testing':
+        from ..alerts.sounds import play_alert
+        play_alert()
+
 
 def get_signals_or_error():
     signals = None
