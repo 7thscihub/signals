@@ -32,11 +32,11 @@ def get_latest_signals(table, limit=10):
 
 
 def update_signals(signals):
+    if not signals:
+        return None, None
     signals_copy = copy.deepcopy(signals)
     appwrite_client = get_client()
     signals_table = TablesDB(appwrite_client)
-    errors = []
-    latest_signals = []
 
     for signal in signals_copy:
         try:
