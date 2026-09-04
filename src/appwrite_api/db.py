@@ -35,7 +35,7 @@ def get_cleaned_signals(signals):
     clean_signals = []
     for signal in signals:
         clean_signals.append({ 
-            k:v, for k, v in signal.items() if k in TABLE_ATTRIBUTES 
+            k: v for k, v in signal.items() if k in TABLE_ATTRIBUTES 
         })
     return clean_signals
 
