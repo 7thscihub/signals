@@ -4,11 +4,24 @@ from appwrite.client import Client
 from appwrite.id import ID
 from appwrite.services.tables_db import TablesDB
 from appwrite.query import Query
+from appwrite.exception import AppwriteException
 
 
 DATABASE_ID = os.environ.get("SIGNALS_DB_ID")
 TABLE_ID = os.environ.get("SIGNALS_TABLE_ID")
 SIGNALS_LIMIT = 10
+
+TABLE_ATTRIBUTES = [
+    'time',
+    'entry_price',
+    'symbol',
+    'sl',
+    'tp1',
+    'tp2',
+    'direction',
+    'signal_type',
+    'interval'
+]
 
 def get_client():
     client = Client()
@@ -16,6 +29,15 @@ def get_client():
     client.set_project(os.environ.get("APPWRITE_FUNCTION_PROJECT_ID"))
     client.set_key(os.environ.get("APPWRITE_FUNCTION_API_KEY"))
     return client
+
+
+def get_cleaned_signals(signals):
+    clean_signals = []
+    for signal in signals:
+        clean_signals.append({ 
+            k:v, for k, v in signal.items() if k in TABLE_ATTRIBUTES 
+        })
+    return clean_signals
 
 
 def get_latest_signals(table, limit=10):
@@ -34,7 +56,10 @@ def get_latest_signals(table, limit=10):
 def update_signals(signals):
     if not signals:
         return None, None
-    signals_copy = copy.deepcopy(signals)
+
+    signals_copy = copy.deepcopy(
+        get_cleaned_signals(signals)
+    )
     appwrite_client = get_client()
     signals_table = TablesDB(appwrite_client)
 
