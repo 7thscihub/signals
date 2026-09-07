@@ -20,7 +20,7 @@ def get_signals_or_error():
     try:
         signals = get_signals()
     except Exception as e:
-        error = e
+        error = traceback.format_exc(e)
     return signals, error
     
 

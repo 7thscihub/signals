@@ -123,7 +123,7 @@ class Analyze:
         
         for signal in signals:
             signal['symbol'] = self._symbol
-            signal['time'] = signal['trigger_candle']['time']
+            signal['time'] = int(signal['trigger_candle']['time'])
         return signals
 
 
