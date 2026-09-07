@@ -26,7 +26,7 @@ def send_push_notifications(signals, test_signals=test_signals):
                 body= message_body,
                 topics=['mooneazy_signals'],
                 data = {
-                    'path': '/signals'
+                    'path': '/'
                 }
             )
 
