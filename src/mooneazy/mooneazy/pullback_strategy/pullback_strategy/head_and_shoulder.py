@@ -63,17 +63,16 @@ def get_hs_sell_level(candles, lookback)->tuple[dict] | None:
     return None, None
 
 
-def get_trade_signals(signals, tp_rrs:tuple=(2, 5), sl_padding:int=0.001):
+def get_trade_signals(signals, tp_rrrs:tuple=(2, 5), sl_padding:int=0.001):
     if not signals:
         return None
     trade_signals = []
-    tp1_rrr = min(tp_rrs)
-    tp2_rrr = max(tp_rrs)
+    tp1_rrr = min(tp_rrrs)
+    tp2_rrr = max(tp_rrrs)
     for signal in signals:
         trade_signals.append(make_trade_signal(
             signal=signal, 
-            tp1_rrr=tp1_rrr,
-            tp2_rrr=tp2_rrr,
+            tp_rrrs = tp_rrrs,
             sl_padding=sl_padding
         ))
     return trade_signals
@@ -126,11 +125,12 @@ def is_on_sr(candles, lookback, signal, fib=0.8):
 
 
 class HeadAndShoulder:
-    def __init__(self, candles, configs):
+    def __init__(self, candles, interval, configs):
         if len(candles) < 200:
             raise ValueError(
                 f"""heads and shoulder signals require 200 candles to work properly."""
             )
+        self._interval = interval
         self._candles = candles[-205:]
         self._configs = configs
         self._pivot_lookback = configs.hs_pivot_lookback 
@@ -147,7 +147,9 @@ class HeadAndShoulder:
         return get_hs_sell_level(self._candles, self._pivot_lookback)
     
     def latest_signals(self):
-        return get_latest_signals(self._candles, self._pivot_lookback, self._fo_lookback)
+        signals = get_latest_signals(self._candles, self._pivot_lookback, self._fo_lookback)
+        signals_with_intervals = [{ **signal, 'interval': self._interval } for signal in signals ]
+        return signals_with_intervals
 
     def latest_trade_signal(self):
         signals = self.latest_signals()
@@ -155,7 +157,7 @@ class HeadAndShoulder:
             candles=self._candles, lookback=self._pivot_lookback, signal=signal, fib=self._sr_fib
         )]
         trade_signals = get_trade_signals(
-            sr_signals, tp_rrs=self._tp_rrrs, sl_padding=self._sl_padding
+            sr_signals, tp_rrrs=self._tp_rrrs, sl_padding=self._sl_padding
         )
         latest_signal = trade_signals[0] if trade_signals else None
         return latest_signal

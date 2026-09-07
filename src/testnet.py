@@ -1,10 +1,9 @@
-from mooneazy.scripts.scalper import get_scalping_signals
+from .mooneazy.mooneazy.scripts.scalper import scalper_debugger
 import json
+import traceback
+
 
 if __name__ == '__main__':
     print("scalper_debugger running")
-    signals, errors = get_scalping_signals()
-    if errors:
-        print(errors)
-    if signals:
-        print(json.dumps(signals, indent=4))
+    scalper_debugger()
+

@@ -103,7 +103,7 @@ class Analyze:
     
     def get_hs_signal(self):
         trade_signals = HeadAndShoulder(
-            candles=self._m30_candles, configs=self._configs
+            candles=self._m30_candles, interval='30m', configs=self._configs
         ).latest_trade_signal()
         return trade_signals
 
