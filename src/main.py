@@ -8,7 +8,7 @@ def main(context):
     signals = []
     errors = {}
     latest_signals = []
-    envs = [ key for key in os.environ.keys() if key.startswith("APPWRITE_") ]
+    envs = [ key for key in os.environ.keys() ]
     context.log(envs)
     try:
         signals, scalper_errors = get_scalping_signals()
