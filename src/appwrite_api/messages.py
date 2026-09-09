@@ -3,6 +3,7 @@ from appwrite.services.messaging import Messaging
 from appwrite.id import ID
 from .client import get_client
 
+
 test_signals = [
     {
         "symbol": "btc",
@@ -11,6 +12,10 @@ test_signals = [
     }
 
 ]
+
+
+
+
 
 def send_push_notifications(signals, test_signals=test_signals):
     # if not signals and os.environ.get("FUNCTION_ENVIRONEMENT", '').lower() != 'dev':
