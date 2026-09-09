@@ -62,7 +62,7 @@ def update_signals(signals):
     )
     appwrite_client = get_client()
     signals_table = TablesDB(appwrite_client)
-    eroors = []
+    errors = []
     for signal in signals_copy:
         try:
             signal_id = ID.unique()

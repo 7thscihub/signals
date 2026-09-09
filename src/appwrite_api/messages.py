@@ -10,10 +10,7 @@ test_signals = [
         "utc_time": "test_utc_time",
         "signal_type": "SFP_BUY"
     }
-
 ]
-
-
 
 
 
