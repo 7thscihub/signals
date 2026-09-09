@@ -16,6 +16,6 @@ def get_client():
 
     client.set_endpoint(ENPOINT)
     client.set_project(PROJECT_ID)
-    client.set_key(API_KEY(API_KEY)
+    client.set_key(API_KEY)
     return client
 
