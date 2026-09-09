@@ -20,21 +20,20 @@ def send_push_notifications(signals, test_signals=test_signals):
     errors = []
     trade_signals = signals or test_signals
     for signal in trade_signals:
-        try:
-            symbol = signal['symbol']
-            message_body = f"{signal['signal_type']} on {signal['utc_time']}"
-            response = messaging.create_push(
-                message_id=ID.unique(),
-                title=f"{symbol} TRADE ALERT!!",
-                body= message_body,
-                topics=['mooneazy_signals'],
-                data = {
-                    'path': '/'
-                }
-            )
+        # try:
+        symbol = signal['symbol']
+        message_body = f"{signal['signal_type']} on {signal['utc_time']}"
+        response = messaging.create_push(
+            message_id=ID.unique(),
+            title=f"{symbol} TRADE ALERT!!",
+            body= message_body,
+            topics=['mooneazy_signals'],
+            data = {
+                'path': '/'
+            }
+        )
 
-        except Exception as e:
-            errors.append(f" FAILED TO SEND PUSH NOTIFICATION FOR {signal}!! \n {e}")
+        # except Exception as e:
     return errors or True
 
 
