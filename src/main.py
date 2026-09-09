@@ -1,3 +1,4 @@
+import os
 from .appwrite_api.db import update_signals
 from .appwrite_api.messages import send_push_notifications
 import traceback
@@ -7,6 +8,8 @@ def main(context):
     signals = []
     errors = {}
     latest_signals = []
+    envs = [ key for key in os.environ.keys() if key.startswith("APPWRITE_") ]
+    context.log(envs)
     try:
         signals, scalper_errors = get_scalping_signals()
         errors['scalper_errors'] = scalper_errors or None
