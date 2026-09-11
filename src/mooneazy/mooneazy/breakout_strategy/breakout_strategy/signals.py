@@ -6,10 +6,10 @@ from .trading import get_trade
 
 def make_trade_signal(breakout_candle, interval, tp_rrrs, sl_padding, score):
     lookback_hl = breakout_candle['high']
-    signal_type = 'engulfing_breakout_sell'
+    signal_type = 'EB_sell'
     if is_bullish(breakout_candle):
         lookback_hl = breakout_candle['low']
-        signal_type = 'engulfing_breakout_buy'
+        signal_type = 'EB_buy'
     signal = {
         'trigger_candle': breakout_candle,
         'lookback_hl': lookback_hl,
