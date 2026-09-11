@@ -15,8 +15,8 @@ test_signals = [
 
 
 def send_push_notifications(signals, test_signals=test_signals):
-    # if not signals and os.environ.get("FUNCTION_ENVIRONEMENT", '').lower() != 'dev':
-    #     return
+    if not signals and os.environ.get("FUNCTION_ENVIRONEMENT", '').lower() != 'dev':
+        return
     client = get_client()
     messaging = Messaging(client)
     errors = []
