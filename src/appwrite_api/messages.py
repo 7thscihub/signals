@@ -4,7 +4,7 @@ from appwrite.id import ID
 from .client import get_client
 
 
-test_signals = [
+TEST_SIGNALS = [
     {
         "symbol": "btc",
         "utc_time": "test_utc_time",
@@ -13,10 +13,9 @@ test_signals = [
 ]
 
 
-
-def send_push_notifications(signals, test_signals=test_signals):
-    if not signals and os.environ.get("FUNCTION_ENVIRONEMENT", '').lower() != 'dev':
-        return
+def send_push_notifications(signals, test_signals=TEST_SIGNALS):
+   # if not signals and os.environ.get("FUNCTION_ENVIRONEMENT", '').lower() != 'dev':
+    #     return
     client = get_client()
     messaging = Messaging(client)
     errors = []
