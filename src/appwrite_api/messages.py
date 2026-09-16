@@ -14,14 +14,13 @@ TEST_SIGNALS = [
 
 
 def send_push_notifications(signals, test_signals=TEST_SIGNALS):
-   if not signals and os.environ.get("FUNCTION_ENVIRONEMENT", '').lower() != 'dev':
+    if not signals and os.environ.get("FUNCTION_ENVIRONEMENT", '').lower() != 'dev':
         return
     client = get_client()
     messaging = Messaging(client)
     errors = []
     trade_signals = signals or test_signals
     for signal in trade_signals:
-        # try:
         symbol = signal['symbol']
         message_body = f"{signal['signal_type']} on {signal['utc_time']}"
         response = messaging.create_push(
@@ -33,8 +32,6 @@ def send_push_notifications(signals, test_signals=TEST_SIGNALS):
                 'path': '/'
             }
         )
-
-        # except Exception as e:
     return errors or True
 
 

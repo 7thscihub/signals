@@ -4,12 +4,11 @@ version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.11"
-dependencies = [
-    "mooneazy",
-]
+
 dependencies = [
     "appwrite>=23.0.0,<24.0.0",
-    "mooneazy"
+    "mooneazy",
+    "pydantic>=2.13.5",
 ]
 
 [tool.uv.sources]
