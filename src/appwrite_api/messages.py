@@ -1,39 +1,42 @@
 import os
+import traceback
+from pydantic import validate_call
 from appwrite.services.messaging import Messaging
 from appwrite.id import ID
 from .client import get_client
+import .alert_models as am
 
 
-TEST_SIGNALS = [
-    {
-        "symbol": "btc",
-        "utc_time": "test_utc_time",
-        "signal_type": "SFP_BUY"
-    }
-]
-
-
-def send_push_notifications(signals, test_signals=TEST_SIGNALS):
-    if not signals and os.environ.get("FUNCTION_ENVIRONEMENT", '').lower() != 'dev':
-        return
-    
+def send_alert(alert_details: Alert=SIGNAL_ALERT):
+    alert = am.SignalAlert.model_validate(alert_details)
     client = get_client()
     messaging = Messaging(client)
-    errors = []
-    trade_signals = signals or test_signals
+    errors = None
 
-    for signal in trade_signals:
-        symbol = signal['symbol']
-        message_body = f"{signal['signal_type']} on {signal['utc_time']}"
-        response = messaging.create_push(
-            message_id=ID.unique(),
-            title=f"{symbol} TRADE ALERT!!",
-            body= message_body,
-            topics=['mooneazy_signals'],
-            data = {
-                'path': '/'
-            }
-        )
+    response = messaging.create_push(
+        message_id=ID.unique(),
+        title=alert.info.title,
+        body=alert.info.body,
+        topics=alert.info.topics,
+        data=alert.data
+    )
+
+
+def send_push_notifications(alerts: list[dict], test_alerts=am.SIGNAL_ALERT):
+    if not alerts and os.environ.get("FUNCTION_ENVIRONEMENT", '').lower() != 'dev':
+        return
+
+    client = get_client()
+    messaging = messaging(client)
+    errors = []
+    trade_alerts = alerts of test_alerts
+
+    for alert in trade_alerts:
+        try:
+            send_alert(alert_details=alert)
+        except Exception as e:
+            errors.append(traceback.format_exc(e))
     return errors or True
+
 
 

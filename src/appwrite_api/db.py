@@ -5,6 +5,7 @@ from appwrite.id import ID
 from appwrite.services.tables_db import TablesDB
 from appwrite.query import Query
 from appwrite.exception import AppwriteException
+from .signal_models import SignalModel
 
 
 DATABASE_ID = os.environ.get("SIGNALS_DB_ID")
@@ -34,9 +35,8 @@ def get_client():
 def get_cleaned_signals(signals):
     clean_signals = []
     for signal in signals:
-        clean_signals.append({ 
-            k: v for k, v in signal.items() if k in TABLE_ATTRIBUTES 
-        })
+        valid_siganl = SignalModel.model_validate(signal)
+        clean_signals.append(valid_siganl.model_dump())
     return clean_signals
 
 
@@ -57,13 +57,11 @@ def update_signals(signals):
     if not signals:
         return None, None
 
-    signals_copy = copy.deepcopy(
-        get_cleaned_signals(signals)
-    )
+    clean_signals = get_cleaned_signals(signals)
     appwrite_client = get_client()
     signals_table = TablesDB(appwrite_client)
     errors = []
-    for signal in signals_copy:
+    for signal in clean_signals:
         try:
             signal_id = ID.unique()
             signals_table.create_row(
@@ -73,6 +71,7 @@ def update_signals(signals):
                 data=signal
             )
         except AppwriteException as e:
+            # skipping duplicate errors if sigal exists
             if e.code == 409:
                 continue
             else:
