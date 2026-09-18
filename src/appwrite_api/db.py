@@ -1,43 +1,47 @@
 import os
-import copy
+from collections.abc import Callable
+from pydantic import validate_call
 from appwrite.client import Client
 from appwrite.id import ID
 from appwrite.services.tables_db import TablesDB
 from appwrite.query import Query
 from appwrite.exception import AppwriteException
-from .signal_models import SignalModel
+from .models import SignalModel, ResultModel, SignalData, ResultData 
+
 
 
 DATABASE_ID = os.environ.get("SIGNALS_DB_ID")
 TABLE_ID = os.environ.get("SIGNALS_TABLE_ID")
 SIGNALS_LIMIT = 10
 
-TABLE_ATTRIBUTES = [
-    'time',
-    'entry_price',
-    'symbol',
-    'sl',
-    'tp1',
-    'tp2',
-    'direction',
-    'signal_type',
-    'interval'
-]
 
-def get_client():
+@validate_call(validate_return=True)
+def get_db_client()->TablesDB:
     client = Client()
     client.set_endpoint(os.environ.get("APPWRITE_FUNCTION_API_ENDPOINT"))
     client.set_project(os.environ.get("APPWRITE_FUNCTION_PROJECT_ID"))
     client.set_key(os.environ.get("APPWRITE_FUNCTION_API_KEY"))
-    return client
+    return TablesDB(client)
 
 
 def get_cleaned_signals(signals):
     clean_signals = []
     for signal in signals:
-        valid_siganl = SignalModel.model_validate(signal)
+        valid_siganl = SignalData.model_validate(signal)
         clean_signals.append(valid_siganl.model_dump())
     return clean_signals
+
+
+def get_valid_results(results: lsit[dict]) -> tuple:
+    valid_results = []
+    errors = []
+    for result in results:
+        try:
+            valid_result.append(ResultData.model_validate(result))
+        except Exception as e:
+            errors.append(traceback.format_exc(e))
+            continue
+    return valid_results, errors
 
 
 def get_latest_signals(table, limit=10):
@@ -53,13 +57,52 @@ def get_latest_signals(table, limit=10):
     return [row.to_dict() for row in rows]
 
 
-def update_signals(signals):
+def get_row(db_client: Callable, database_id, table_id, row_id):
+    result = db_client().get_row(
+        database_id=database_id,
+        table_id='table_id,
+        row_id=row_id
+    )
+
+
+@validate_call()
+def update_row(
+        db_client: Callable, 
+        database_id: str, 
+        table_id: str , 
+        row_id: str, 
+        row_data: dict
+    ):
+    result = db_client().update_row(
+        database_id=database_id,
+        table_id=table_id,
+        row_id=row_id,
+        data=SignalData.model_validate(row_data).model_dump()
+    )
+
+
+@validate_call()
+def create_row(
+        db_client: Callable, 
+        db_id: str, 
+        table_id: str, 
+        row_id: str, 
+        row_data: dict
+    ):
+    response = db_client().create_row(
+        database_id=db_id,
+        table_id=table_id,
+        row_id=row_id ,
+        data=SignalData.model_validate(row_data).model_dump()
+    )
+
+
+def update_signals(signals: list[dict]):
     if not signals:
-        return None, None
+        return
 
     clean_signals = get_cleaned_signals(signals)
-    appwrite_client = get_client()
-    signals_table = TablesDB(appwrite_client)
+    signals_table = get_db_client()
     errors = []
     for signal in clean_signals:
         try:
@@ -71,13 +114,81 @@ def update_signals(signals):
                 data=signal
             )
         except AppwriteException as e:
-            # skipping duplicate errors if sigal exists
+            # skipping duplicate if sigal exists
             if e.code == 409:
                 continue
             else:
                 errors.append(e)
 
-    latest_signals = get_latest_signals(table=signals_table, limit=SIGNALS_LIMIT) or None
-    return latest_signals, errors
+
+@validate_call(validate_return=True)
+def get_latest_results(
+        db_client: Callable = get_db_client, 
+        database_id: str = DATABASE_ID, 
+        table_id: str = TABLE_ID,
+        quantity: int = 10
+    )->list[dict]:
+
+    response = db_client().list_rows(
+        database_id=database_id,
+        table_id=table_id,
+        queries=[
+            Query.or_([
+                Query.equal("tp1_results", "fail"),
+                Query.equal("tp2_results", "fai")
+                Query.equal("tp1_results", "success"),
+                Query.equal("tp2_results", "success")
+            ])
+        ]
+    )
+    rows = response.get("rows", [])
+    return [row.to_dict() for row in rows]
+
+
+@validate_call(validate_return=True)
+def get_pending_signals(
+        db_client: Callable = get_db_client, 
+        database_id: str = DATABASE_ID, 
+        table_id: str = TABLE_ID
+    )->list[dict]:
+    """
+    returns signals that have not hit a stop loss or all its tps
+    checks for a null or pending status for either of the tps
+    """
+    response = db_client().list_rows(
+        database_id=database_id,
+        table_id=table_id,
+        queries=[
+            Query.or_([
+                Query.is_null("tp1_results"),
+                Query.equal("tp1_results", "pending"),
+                Query.is_null("tp2_results"),
+                Query.equal("tp2_results", "pending")
+            ])
+        ]
+    )
+    rows = response.get("rows", [])
+    return [row.to_dict() for row in rows]
+
+
+def update_results(results):
+    valid_results, errors = get_valid_results(results)
+    if not valid_results:
+        return
+
+    for result in valid_results:
+        update_row(
+            db_client=get_db_client,
+            database_id=DATABASE_ID,
+            table_id=TABLE_ID,
+            row_id=results.signal_id,
+            row_data={
+                'tp1_results': result.tp1_results,
+                'tp2_results': result.tp2_results,
+            }
+        )
+    return valid_results, errors
+
+
 
 

@@ -28,6 +28,8 @@ def get_results(candles, signal):
     tps = signal['tps']
     tps_dict = {}
     sorted_tps = sorted(tps)
+
+    # create the default tps_dict
     for i in range(sorted_tps):
         tp = i + 1
         tps_dict[tp] = {'target': sorted_tps[i], 'status': 'pending'}
