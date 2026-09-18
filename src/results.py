@@ -1,5 +1,5 @@
 import traceback
-import mooneazy.trading.results import get_results
+from mooneazy.trading.results import get_results
 from .appwrite.db import upddate_results, get_pending_signals
 from .appwrite_api.messages import send_push_notifications
 
