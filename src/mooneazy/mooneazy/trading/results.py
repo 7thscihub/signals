@@ -1,10 +1,10 @@
-from typing import Literal, TypedDict
+from typing import Literal
 from pydantic import BaseModel, validate_call, RootModel
-import ..candles_api.api as candles_api
+from ..candles_api.candles_api import api
 from . import util
 
 
-class Candle(TypedDict):
+class Candle(BaseModel):
     time: int
     open: float
     high: float
@@ -14,7 +14,7 @@ class Candle(TypedDict):
     end_time: float
 
 
-class SignalModel(TypedDict):
+class SignalData(BaseModel):
     symbol: str
     interval: str
     time: int
@@ -24,34 +24,43 @@ class SignalModel(TypedDict):
     tps: tuple 
 
 
-class Result(TypedDict):
+class SignalModel(BaseModel):
+    id: str
+    data: SignalData
+
+
+class Result(BaseModel):
     target: float
     status: Literal['pending', 'success', 'failed']
 
 
-@validate_call(validate_return=True)
-def get_candles(symbol: str, interval: str, start_time: str) -> list[Candle]:
+@validate_call()
+def get_candles(symbol: str, interval: str, start_time: str) -> list[dict]:
+    candles = []
     parameters = {
         'interval': interval, 'start_time': start_time, 'symbol': symbol
     }
-    return candles_api.get_candles(parameters)
 
+    candles = api.get_candles(parameters)
+    for candle in candles:
+        candles.append(Candle.model_validate(candle).model_dump())
+    return candles
 
-@validate_call(validate_return=True)
-def get_signal_results(signal:SignalModel) -> dict[int, Result]:
+@validate_call()
+def get_signal_results(signal_data:SignalData) -> dict[int, dict]:
     candles = get_candles(
-        symbol=signal['symbol'],
-        interval=signal['interval'],
-        start_time=signal['time']
+        symbol=signal_data.symbol,
+        interval=signal_data.interval,
+        start_time=signal_data.time
     )
     return util.get_results(candles=candles, signal=signal)
 
 
-@validate_call(validate_return=True)
+@validate_call()
 def get_results(signals:list[SignalModel]):
     results = []
     for siganal in signals:
-        results.append(get_signal_results(signal))
+        results.append(get_signal_results(signal.data))
     return results
 
 

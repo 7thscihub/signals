@@ -15,7 +15,7 @@ TABLE_ID = os.environ.get("SIGNALS_TABLE_ID")
 SIGNALS_LIMIT = 10
 
 
-@validate_call(validate_return=True)
+@validate_call()
 def get_db_client()->TablesDB:
     client = Client()
     client.set_endpoint(os.environ.get("APPWRITE_FUNCTION_API_ENDPOINT"))
@@ -32,7 +32,7 @@ def get_cleaned_signals(signals):
     return clean_signals
 
 
-def get_valid_results(results: lsit[dict]) -> tuple:
+def get_valid_results(results: list[dict]) -> tuple:
     valid_results = []
     errors = []
     for result in results:
@@ -60,7 +60,7 @@ def get_latest_signals(table, limit=10):
 def get_row(db_client: Callable, database_id, table_id, row_id):
     result = db_client().get_row(
         database_id=database_id,
-        table_id='table_id,
+        table_id=table_id,
         row_id=row_id
     )
 
@@ -126,7 +126,7 @@ def get_latest_results(
         db_client: Callable = get_db_client, 
         database_id: str = DATABASE_ID, 
         table_id: str = TABLE_ID,
-        quantity: int = 10
+        limit: int = 10
     )->list[dict]:
 
     response = db_client().list_rows(
@@ -135,10 +135,12 @@ def get_latest_results(
         queries=[
             Query.or_([
                 Query.equal("tp1_results", "fail"),
-                Query.equal("tp2_results", "fai")
+                Query.equal("tp2_results", "fail"),
                 Query.equal("tp1_results", "success"),
                 Query.equal("tp2_results", "success")
-            ])
+            
+            ]),
+            Qwery.limit(limit)
         ]
     )
     rows = response.get("rows", [])

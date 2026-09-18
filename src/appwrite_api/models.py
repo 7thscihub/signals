@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from typing import Literal
 
 class TriggerCandle(BaseModel):
     time: int
@@ -25,7 +26,7 @@ class SignalData(BaseModel):
 
 
 class SignalModel(BaseModel):
-    $id: str
+    id: str
     data: SignalData
 
 
@@ -35,14 +36,8 @@ class ResultData(BaseModel):
 
 
 class ResultModel(BaseModel):
-    $id: str
+    id: str
     data: ResultData
-
-
-def flatten_rows(rows: list[dict]) -> list[]:
-    flat_rows = []
-    for row in rows:
-        row['$id'] = 
 
 
 

@@ -1,4 +1,3 @@
-from typing import TypedDict,
 from pydantic import BaseModel
 
 class AlertInfo(BaseModel):
@@ -35,14 +34,14 @@ class SignalAlert(BaseModel):
 ALERT_INFO = {
     'title': 'sample title',
     'body': 'sample alert body!!',
-    'topics': 'mooneazy_signals',
+    'topics': ['mooneazy_signals'],
 }
 
 
 RESULTS_DATA = {
     'signal_type': 'signal_type',
     'path': '/',
-    'utc_time': 'utc sample time'
+    'utc_time': 'utc sample time',
     'signal_id': 'uuid23245343'
 }
 

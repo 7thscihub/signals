@@ -10,15 +10,15 @@ def get_results_candles(signal):
         'start_time': signal['start_time']
     }
 
-def update_failed_tps(tps_dict)
+def update_failed_tps(tps_dict):
     for k, v in tps_dict.items():
         # skip targets that have already been hit 
-        if v['status'] == 'success'
+        if v['status'] == 'success':
             continue
         v['status'] = 'failed'
 
 
-def update_successful_tps(tps_dict)
+def update_successful_tps(tps_dict):
     for k, v in tps_dict.items():
         if touches(candle, v['target']):
             v['status'] = 'success'
