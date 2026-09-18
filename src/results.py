@@ -6,14 +6,16 @@ from .appwrite_api.messages import send_push_notifications
 
 def main(context):
     new_results = []
-
+    errors = None
     try:
         pending_signals = get_pending_signals()
-        results = get_results(pending_signals)
+        new_results = get_results(pending_signals)
         send_push_notifications(results)
         upddate_results(results)
     except Exception as e:
-        context.log(traceback.format_exc(e))
-
-    return latest updated results
+        errors = traceback.format_exc()
+        context.log(errors)
+    if erros:
+        return context.res(errors)
+    return context.res(new_results)
 
