@@ -23,10 +23,11 @@ class SignalData(BaseModel):
     signal_type: str
     tp1_results: str
     tp1_results: str
+    is_open: bool
 
 
 class SignalModel(BaseModel):
-    id: str
+    id: str = Field(Valifation_aliase='$id')
     data: SignalData
 
 

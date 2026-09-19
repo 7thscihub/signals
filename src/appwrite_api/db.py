@@ -158,23 +158,13 @@ def get_pending_signals(
     checks for a null or pending status for either of the tps
     """
     tablesDB = db_client()
-    pending_tp1 = tablesDB.list_rows(
+    pending_signals = tablesDB.list_rows(
         database_id=DATABASE_ID,
         table_id=TABLE_ID,
-        queries=[ Query.not_equal("tp1_results", "success") ]
+        queries=[ Query.not_equal("is_open", False) ]
     )
-
-    pending_tp2 = tablesDB.list_rows(
-        database_id=DATABASE_ID,
-        table_id=TABLE_ID,
-        queries=[ Query.not_equal("tp2_results", "success")]
-    )
-
-    # Combine rows while avoiding duplicates
-    combined_rows = pending_tp1["rows"] + pending_tp2["rows"]
-    rows = { row["$id"]: row['data'] for row in combined_rows}
-    return rows or None 
-
+    rows = { row["$id"]: row['data'] for row in pending_signals}
+    return rows or None
 
 
 def update_results(results):
