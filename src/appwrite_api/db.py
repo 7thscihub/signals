@@ -9,7 +9,6 @@ from appwrite.exception import AppwriteException
 from .models import SignalModel, ResultModel, SignalData, ResultData 
 
 
-
 DATABASE_ID = os.environ.get("SIGNALS_DB_ID")
 TABLE_ID = os.environ.get("SIGNALS_TABLE_ID")
 SIGNALS_LIMIT = 10
@@ -146,20 +145,20 @@ def get_pending_signals(
         db_client: Callable = get_db_client, 
         database_id: str = DATABASE_ID, 
         table_id: str = TABLE_ID
-    )->dict[str, dict]:
+    )->list[SignalModel]:
     """
     returns signals that have not hit a stop loss or all its tps
     checks for a null or pending status for either of the tps
     """
-
+    signals = []
     tablesDB = db_client()
     response = tablesDB.list_rows(
         database_id=database_id,
         table_id=table_id,
         queries=[ Query.not_equal("is_open", False) ]
     )
-    
-    signals = { row.id: row.data for row in response.rows}
+    for row in response.rows:
+        signals.append(SignalModel.model_validate(row).model_dump())
     return signals
 
 

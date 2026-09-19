@@ -27,7 +27,7 @@ class SignalData(BaseModel):
 
 
 class SignalModel(BaseModel):
-    id: str = Field(Valifation_aliase='$id')
+    id: str
     data: SignalData
 
 

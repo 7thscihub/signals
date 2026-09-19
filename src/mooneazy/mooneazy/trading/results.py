@@ -1,7 +1,7 @@
 from typing import Literal
 from pydantic import BaseModel, validate_call, RootModel
 from ..candles_api.candles_api import api
-from . import util
+from . import tps
 
 
 class Candle(BaseModel):
@@ -13,6 +13,10 @@ class Candle(BaseModel):
     volume: float
     end_time: float
 
+class Tp(BaseModel):
+    target: float
+    status: Literal['pending', 'success', 'failed']
+
 
 class SignalData(BaseModel):
     symbol: str
@@ -21,17 +25,13 @@ class SignalData(BaseModel):
     signal_type: str
     entry_price: float
     sl: float
-    tps: tuple 
+    tp1: Tp
+    tp2: Tp 
 
 
 class SignalModel(BaseModel):
     id: str
     data: SignalData
-
-
-class Result(BaseModel):
-    target: float
-    status: Literal['pending', 'success', 'failed']
 
 
 @validate_call()
@@ -40,27 +40,32 @@ def get_candles(symbol: str, interval: str, start_time: str) -> list[dict]:
     parameters = {
         'interval': interval, 'start_time': start_time, 'symbol': symbol
     }
-
     candles = api.get_candles(parameters)
     for candle in candles:
         candles.append(Candle.model_validate(candle).model_dump())
     return candles
 
-@validate_call()
-def get_signal_results(signal_data:SignalData) -> dict[int, dict]:
+
+@validate_call(validate_return=True)
+def get_signal_results(signal:[SignalModel]) -> SignalModel:
+    signal_data = signal.data 
     candles = get_candles(
         symbol=signal_data.symbol,
         interval=signal_data.interval,
         start_time=signal_data.time
     )
-    return util.get_results(candles=candles, signal=signal)
+    signal_results = tps.get_results(candles=candles, signal_data=signal_data)
+    for i in range(len(signal_results)):
+        tp_key = f'tp{i + 1}'
+        setattr(signal_data, tp_key, i)
+    return signal
 
 
 @validate_call()
-def get_results(signals:list[SignalModel]):
+def get_results(signals:list):
     results = []
     for siganal in signals:
-        results.append(get_signal_results(signal.data))
+        results.append(get_signal_results(signal))
     return results
 
 
