@@ -15,7 +15,7 @@ def main(context):
     except Exception as e:
         errors = traceback.format_exc()
         context.log(errors)
-    if erros:
+    if errors:
         return context.res(errors)
     return context.res(new_results)
 
