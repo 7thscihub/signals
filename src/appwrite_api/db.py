@@ -132,14 +132,8 @@ def get_latest_results(
     response = db_client().list_rows(
         database_id=database_id,
         table_id=table_id,
-        queries=[
-            Query.or_([
-                Query.equal("tp1_results", "fail"),
-                Query.equal("tp2_results", "fail"),
-                Query.equal("tp1_results", "success"),
-                Query.equal("tp2_results", "success")
-            
-            ]),
+        queries=[ 
+            Query.not_equal("is_open", True),
             Qwery.limit(limit)
         ]
     )
@@ -152,19 +146,22 @@ def get_pending_signals(
         db_client: Callable = get_db_client, 
         database_id: str = DATABASE_ID, 
         table_id: str = TABLE_ID
-    )->dict[str, dict] | None:
+    )->dict[str, dict]:
     """
     returns signals that have not hit a stop loss or all its tps
     checks for a null or pending status for either of the tps
     """
+    signals = {}
+
     tablesDB = db_client()
-    pending_signals = tablesDB.list_rows(
-        database_id=DATABASE_ID,
-        table_id=TABLE_ID,
+    response = tablesDB.list_rows(
+        database_id=database_id,
+        table_id=table_id,
         queries=[ Query.not_equal("is_open", False) ]
     )
-    rows = { row["$id"]: row['data'] for row in pending_signals}
-    return rows or None
+    if rows:= response.get('rows'):
+        signals = { row["$id"]: row['data'] for row in response.get('rows')}
+    return signals
 
 
 def update_results(results):
