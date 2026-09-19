@@ -159,8 +159,8 @@ def get_pending_signals(
         table_id=table_id,
         queries=[ Query.not_equal("is_open", False) ]
     )
-    if rows:= response.get('rows'):
-        signals = { row["$id"]: row['data'] for row in response.get('rows')}
+    if response['total'] != 0:
+        signals = { row["$id"]: row['data'] for row in rows}
     return signals
 
 
