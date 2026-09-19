@@ -16,6 +16,6 @@ def main(context):
         errors = traceback.format_exc()
         context.log(errors)
     if errors:
-        return context.res(errors)
-    return context.res(new_results)
+        return context.res.json({'errors': errors})
+    return context.res.json(new_results)
 
