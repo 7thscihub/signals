@@ -152,25 +152,28 @@ def get_pending_signals(
         db_client: Callable = get_db_client, 
         database_id: str = DATABASE_ID, 
         table_id: str = TABLE_ID
-    )->list[dict]:
+    )->dict[str, dict]:
     """
     returns signals that have not hit a stop loss or all its tps
     checks for a null or pending status for either of the tps
     """
-    response = db_client().list_rows(
-        database_id=database_id,
-        table_id=table_id,
-        queries=[
-            Query.or_([
-                Query.is_null("tp1_results"),
-                Query.equal("tp1_results", "pending"),
-                Query.is_null("tp2_results"),
-                Query.equal("tp2_results", "pending")
-            ])
-        ]
+    tablesDB = db_client()
+    pending_tp1 = tablesDB.list_rows(
+        database_id=DATABASE_ID,
+        table_id=TABLE_ID,
+        queries=[ Query.not_equal("tp1", "success") ]
     )
-    rows = response.get("rows", [])
-    return [row.to_dict() for row in rows]
+
+    pending_tp2 = tablesDB.list_rows(
+        database_id=DATABASE_ID,
+        table_id=TABLE_ID,
+        queries=[ Query.not_equal("tp2", "success")]
+    )
+
+    # Combine rows while avoiding duplicates
+    combined_rows = tp1_response["rows"] + tp2_response["rows"]
+    rows = { row["$id"]: row['data'] for row in combined_rows}
+    return rows
 
 
 def update_results(results):
