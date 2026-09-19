@@ -171,7 +171,7 @@ def get_pending_signals(
     )
 
     # Combine rows while avoiding duplicates
-    combined_rows = tp1_response["rows"] + tp2_response["rows"]
+    combined_rows = pending_tp1["rows"] + pending_tp2["rows"]
     rows = { row["$id"]: row['data'] for row in combined_rows}
     return rows or None 
 
