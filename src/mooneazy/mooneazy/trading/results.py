@@ -47,7 +47,7 @@ def get_candles(symbol: str, interval: str, start_time: str) -> list[dict]:
 
 
 @validate_call(validate_return=True)
-def get_signal_results(signal:[SignalModel]) -> SignalModel:
+def get_signal_results(signal:SignalModel) -> SignalModel:
     signal_data = signal.data 
     candles = get_candles(
         symbol=signal_data.symbol,
