@@ -151,7 +151,6 @@ def get_pending_signals(
     returns signals that have not hit a stop loss or all its tps
     checks for a null or pending status for either of the tps
     """
-    signals = {}
 
     tablesDB = db_client()
     response = tablesDB.list_rows(
@@ -159,8 +158,8 @@ def get_pending_signals(
         table_id=table_id,
         queries=[ Query.not_equal("is_open", False) ]
     )
-    if response['total'] != 0:
-        signals = { row["$id"]: row['data'] for row in rows}
+    
+    signals = { row.id: row.data for row in response.rows}
     return signals
 
 
