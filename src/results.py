@@ -16,7 +16,8 @@ def main(context):
     except Exception as e:
         errors = traceback.format_exc()
         context.log(errors)
-    if errors:
-        return context.res.json({'errors': errors})
-    return context.res.json(new_results)
-
+    return context.res.json({
+        'results': new_results,
+        'errors': errors
+    })
+    
