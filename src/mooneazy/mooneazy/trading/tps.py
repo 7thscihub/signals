@@ -1,3 +1,4 @@
+import copy
 from pydantic import validate_call
 
 
@@ -12,34 +13,35 @@ def get_results_candles(signal):
         'start_time': signal['start_time']
     }
 
+
 def update_failed_tps(tps):
-    for tp in tps:
+    for key, value in tps.items():
         # skip targets that have already been hit 
-        if tp['status'] == 'success':
+        if value['status'] == 'success':
             continue
-        tp['status'] = 'failed'
+        value['status'] = 'failed'
 
 
 def update_successful_tps(tps, current_candle):
-    for tp in tps_list:
-        if touches(current_candle, tp['target']):
-            tp['status'] = 'success'
+    for key, value in tps.items():
+        if touches(current_candle, value['target']):
+            value['status'] = 'success'
 
 
-def collect_signal_tps(signal_data, tp_keys=None):
-    tps = []
-    tp_keys = tp_keys or ['tp1', 'tp2', 'tp3', 'tp4', 'tp5']
+def collect_signal_tps(signal_data, tp_keys=None) -> dict[str, float]:
+    tp_keys = sorted(tp_keys) or ['tp1', 'tp2', 'tp3', 'tp4', 'tp5']
+    tp_values = []
     for key, value in signal_data.items():
         if key == 'tps':
-            return value 
+            tp_values = sorted(signal_data['tps'])
         if key in tp_keys:
-            tps.append(value)
-    return tps
+            tp_values.append(value)
+    return dict(zip(tp_keys, tp_values))
 
 
 @validate_call()
 def get_results(candles:list[dict], signal_data: dict) -> list[dict]:
-    tps:list = collect_signal_tps(signal_data)
+    tps:dict = collect_signal_tps(signal_data)
 
     for candle in candles:
         if int(candles['time']) <= int(signal_data['time']):

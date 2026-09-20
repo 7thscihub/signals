@@ -1,5 +1,5 @@
 import traceback
-from mooneazy.trading.results import get_results
+from mooneazy.trading.results import get_updated_signals
 from .appwrite_api.db import update_results, get_pending_signals
 from .appwrite_api.messages import send_push_notifications
 
@@ -9,9 +9,10 @@ def main(context):
     errors = None
     try:
         pending_signals = get_pending_signals()
-        new_results = get_results(pending_signals)
-        send_push_notifications(results)
-        upddate_results(results)
+        updated_signals = get_updated_signals(pending_signals)
+        if updated_signals:
+            send_push_notifications(updated_signals)
+            upddate_results(updated_signals)
     except Exception as e:
         errors = traceback.format_exc()
         context.log(errors)
