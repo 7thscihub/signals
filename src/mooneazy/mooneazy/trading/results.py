@@ -67,8 +67,6 @@ def get_updated_signal(signal:SignalModel) -> dict | None:
         return signal.model_dump()
     return None
 
-def build_signal_model():
-
 
 @validate_call()
 def get_updated_signals(signals:list[dict]) -> list[dict]:
