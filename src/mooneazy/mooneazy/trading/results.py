@@ -52,7 +52,7 @@ def get_candles(symbol: str, interval: str, start_time: str) -> list[dict]:
 
 @validate_call()
 def get_updated_signal(signal:SignalModel) -> dict | None:
-    signal_data[dict] = signal.data.model_dump()
+    signal_data = signal.data.model_dump()
     candles = get_candles(
         symbol=signal_data.symbol,
         interval=signal_data.interval,
