@@ -58,7 +58,7 @@ def get_updated_signal(signal:SignalModel) -> dict | None:
         symbol=signal_data['symbol'],
         interval=signal_data['interval'],
         start_time=signal_data['time'],
-        limit=1400
+        limit=500
     )
     updated_signal_data = tps.get_results(
         candles=candles,
