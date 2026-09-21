@@ -69,10 +69,10 @@ def get_updated_signal(signal:SignalModel) -> dict | None:
 def get_updated_signals(signals:list[dict]) -> list[dict]:
     updated_signals = []
     for signal in signals:
-        if upddated_signal:= get_updated_signal():
+        if upddated_signal:= get_updated_signal(signal):
             upddated_signals.append(signal)
     
-    return updated_signals or None
+    return updated_signals or none
 
 
 
