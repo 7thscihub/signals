@@ -5,19 +5,23 @@ from .appwrite_api.messages import send_push_notifications
 
 
 def main(context):
-    new_results = []
+    nresults = {
+        "pending_signals": None,
+        "updated_signals": None,
+        'errors': None
+    }
     errors = None
     try:
         pending_signals = get_pending_signals()
+        results['pending_signals'] = pending_signals
         updated_signals = get_updated_signals(pending_signals)
+        
         if updated_signals:
+            results['updated_signals'] = updated_signals
             send_push_notifications(updated_signals)
             upddate_results(updated_signals)
     except Exception as e:
         errors = traceback.format_exc()
         context.log(errors)
-    return context.res.json({
-        'results': new_results,
-        'errors': errors
-    })
-    
+        results['errors'] = errors
+    return context.res.json(results)
