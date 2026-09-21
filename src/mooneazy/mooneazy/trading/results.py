@@ -52,19 +52,20 @@ def get_candles(symbol: str, interval: str, start_time: str) -> list[dict]:
 
 @validate_call()
 def get_updated_signal(signal:SignalModel) -> dict | None:
-    signal_data = signal.data.model_dump()
+    signal_dict = signal.model_dump()
+    signal_data = signal_dict['data']
     candles = get_candles(
-        symbol=signal_data.symbol,
-        interval=signal_data.interval,
-        start_time=signal_data.time
+        symbol=signal_data['symbol'],
+        interval=signal_data['interval'],
+        start_time=signal_data['time']
     )
     updated_signal_data = tps.get_results(
         candles=candles,
         signal_data=signal_data
     )
-    if updated_signal_data != original_signal_dict:
-        signal.data = updated_signal_data
-        return signal.model_dump()
+    if updated_signal_data != signal_data:
+        signal_dict['data'] = updated_signal_data
+        return signal_dict
     return None
 
 
