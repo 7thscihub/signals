@@ -155,7 +155,7 @@ def get_pending_signals(
     response = tablesDB.list_rows(
         database_id=database_id,
         table_id=table_id,
-        queries=[ Query.not_equal("is_open", False) ]
+        queries=[ Query.equal("status", 'pending') ]
     )
     for row in response.rows:
         signals.append(SignalModel.model_validate(row).model_dump())
