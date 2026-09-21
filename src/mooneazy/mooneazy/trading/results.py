@@ -26,8 +26,11 @@ class SignalData(BaseModel):
     signal_type: str
     entry_price: float
     sl: float
-    tp1: Tp
-    tp2: Tp 
+    tp1: float
+    tp2: float
+    tp1_status: Literal['pending', 'success', 'failed']
+    tp2_status: Literal['pending', 'success', 'failed']
+    status: Literal['pending', 'success', 'failed']
 
 
 class SignalModel(BaseModel):
@@ -64,11 +67,14 @@ def get_updated_signal(signal:SignalModel) -> dict | None:
         return signal.model_dump()
     return None
 
+def build_signal_model():
+
 
 @validate_call()
 def get_updated_signals(signals:list[dict]) -> list[dict]:
     updated_signals = []
     for signal in signals:
+
         if upddated_signal:= get_updated_signal(signal):
             upddated_signals.append(signal)
     
