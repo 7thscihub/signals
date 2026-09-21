@@ -5,7 +5,7 @@ from .appwrite_api.messages import send_push_notifications
 
 
 def main(context):
-    nresults = {
+    results = {
         "pending_signals": None,
         "updated_signals": None,
         'errors': None
