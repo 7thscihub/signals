@@ -142,7 +142,7 @@ def get_latest_results(
 
 @validate_call(validate_return=True)
 def get_pending_signals(
-        db_client: Callable = get_db_client, 
+        db_client: Callable = get_db_client,
         database_id: str = DATABASE_ID, 
         table_id: str = TABLE_ID
     )->list[dict]:
@@ -162,7 +162,7 @@ def get_pending_signals(
     return signals
 
 
-def update_results(results):
+def update_results(results:ResultData, database_id=DATABASE_ID, table_id=TABLE_ID):
     valid_results, errors = get_valid_results(results)
     if not valid_results:
         return
@@ -170,12 +170,12 @@ def update_results(results):
     for result in valid_results:
         update_row(
             db_client=get_db_client,
-            database_id=DATABASE_ID,
-            table_id=TABLE_ID,
-            row_id=results.signal_id,
+            database_id=database_id,
+            table_id=table_id,
+            row_id=results.id,
             row_data={
-                'tp1_results': result.tp1_results,
-                'tp2_results': result.tp2_results,
+                'tp1_status': result.tp1_results,
+                'tp2_status': result.tp2_results,
             }
         )
     return valid_results, errors

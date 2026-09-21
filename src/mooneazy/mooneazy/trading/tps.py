@@ -28,29 +28,42 @@ def update_successful_tps(tps, current_candle):
             value['status'] = 'success'
 
 
-def collect_signal_tps(signal_data, tp_keys=None) -> dict[str, float]:
+def collect_signal_tps(signal_data, tp_keys=None, tp_status_keys=None) -> dict[str, dict]:
     tp_keys = sorted(tp_keys) or ['tp1', 'tp2', 'tp3', 'tp4', 'tp5']
-    tp_values = []
-    for key, value in signal_data.items():
-        if key == 'tps':
-            tp_values = sorted(signal_data['tps'])
-        if key in tp_keys:
-            tp_values.append(value)
-    return dict(zip(tp_keys, tp_values))
+    tp_status_keys = sorted(tp_status_keys) or ['tp1_status', 'tp2_status', 'tp3_status', 'tp4_status', 'tp5_status']
+    tps_dict= {}
+    for i in range(len(tp_keys)):
+        tp_key = tp_keys[i]
+        tp_details = {
+            'target': signal_data[tp_key]
+            'status': signal_data[tp_status_keys[i]]
+        }
+        tps_dict[tp_key] = tp_details
 
+    return tps_dict
+ 
 
-@validate_call()
-def get_results(candles:list[dict], signal_data: dict) -> list[dict]:
+def get_results(candles:list[dict], signal_data: dict) -> dict[str, dict]:
+    """
+    returns an update signal_data dictionary with updated status for the
+    """
+
     tps:dict = collect_signal_tps(signal_data)
-
+    results = copy.deepcopy(signal_data)
+    stop_loss = signal_data['sl']
     for candle in candles:
-        if int(candles['time']) <= int(signal_data['time']):
+        if int(candle['time']) <= int(signal_data['time']):
             continue
-        if touches(candle, signal_data['sl']):
+        if touches(candle, stop_loss):
             update_failed_tps(tps)
+            results['status'] = 'failed'
             break
         update_successful_tps(tps, candle)
-    return tps
+
+    for key, value in tps.items():
+        results[f"{key}_status"] = value['status'] 
+
+    return results
 
 
 

@@ -47,39 +47,34 @@ def get_candles(symbol: str, interval: str, start_time: str) -> list[dict]:
     return candles
 
 
-@validate_call(validate_return=True)
-def get_updated_signal(signal:SignalModel) -> SignalModel:
-    signal_copy = copy.deepcopy(signal)
-    signal_data[dict] = signal_copy.data.model_dump()
+@validate_call()
+def get_updated_signal(signal:SignalModel) -> dict | None:
+    signal_data[dict] = signal.data.model_dump()
     candles = get_candles(
         symbol=signal_data.symbol,
         interval=signal_data.interval,
         start_time=signal_data.time
     )
-    signal_tps[dict] = tps.collect_tps(signal_data)
-    signal_results[dict] = tps.get_results(
-        candles=candles, 
+    updated_signal_data = tps.get_results(
+        candles=candles,
         signal_data=signal_data
     )
-    for k, v in signal_results.items():
-        if k not in signal_data.keys() or v != signal_tps[k]:
-            setattr(signal_copy, k, v) 
-    updated_signal_dict = signal_copy.model_dump()
-    original_signal_dict = signal.model_dump()
-    if signal_copy_dict == original_signal_dict:
-        return signal_copy_dict
+    if updated_signal_data != original_signal_dict:
+        signal.data = updated_signal_data
+        return signal.model_dump()
     return None
 
 
 @validate_call()
-def get_updated_signals(signals:list[SignalModel]):
-    updated_signals = []
+def get_updated_signals(signals:list[dict]) -> list[dict]:
+    updated_signals []
     for signal in signals:
-        updated_signal = get_updated_signal(signal)
-        if not upddated_signal:
-            continue
-        updated_signals.append(updated_signal)
-    return updated_signals
+        if upddated_signal:= get_updated_signal():
+            upddated_signals.append(signal)
+    
+    return updated_signals or None
+
+
 
 
 

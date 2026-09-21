@@ -21,9 +21,9 @@ class SignalData(BaseModel):
     direction: str
     interval: str 
     signal_type: str
-    tp1_status: str
-    tp1_status: str
-    status: str
+    tp1_status: Literal['sucess', 'pending', 'failed']
+    tp1_status: Literal['sucess', 'pending', 'failed']
+    status: Literal['sucess', 'pending', 'failed']
 
 
 class SignalModel(BaseModel):
@@ -32,13 +32,15 @@ class SignalModel(BaseModel):
 
 
 class ResultData(BaseModel):
-    tp1_results: Literal['sucess', 'pending', 'failed']
-    tp2_results: Literal['sucess', 'pending', 'failed']
+    id: str
+    tp1_status: Literal['sucess', 'pending', 'failed']
+    tp1_status: Literal['sucess', 'pending', 'failed']
 
 
 class ResultModel(BaseModel):
     id: str
     data: ResultData
+
 
 
 
