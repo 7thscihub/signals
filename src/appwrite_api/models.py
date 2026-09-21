@@ -22,7 +22,7 @@ class SignalData(BaseModel):
     interval: str 
     signal_type: str
     tp1_status: Literal['sucess', 'pending', 'failed']
-    tp1_status: Literal['sucess', 'pending', 'failed']
+    tp2_status: Literal['sucess', 'pending', 'failed']
     status: Literal['sucess', 'pending', 'failed']
 
 
