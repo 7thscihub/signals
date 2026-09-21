@@ -35,7 +35,7 @@ def collect_signal_tps(signal_data, tp_keys=None, tp_status_keys=None) -> dict[s
     for i in range(len(tp_keys)):
         tp_key = tp_keys[i]
         tp_details = {
-            'target': signal_data[tp_key]
+            'target': signal_data[tp_key],
             'status': signal_data[tp_status_keys[i]]
         }
         tps_dict[tp_key] = tp_details
