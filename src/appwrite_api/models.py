@@ -21,9 +21,9 @@ class SignalData(BaseModel):
     direction: str
     interval: str 
     signal_type: str
-    tp1_results: str
-    tp1_results: str
-    is_open: bool
+    tp1_status: str
+    tp1_status: str
+    status: str
 
 
 class SignalModel(BaseModel):

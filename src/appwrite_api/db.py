@@ -145,7 +145,7 @@ def get_pending_signals(
         db_client: Callable = get_db_client, 
         database_id: str = DATABASE_ID, 
         table_id: str = TABLE_ID
-    )->list[SignalModel]:
+    )->list[dict]:
     """
     returns signals that have not hit a stop loss or all its tps
     checks for a null or pending status for either of the tps
