@@ -27,7 +27,7 @@ class SignalData(BaseModel):
 
 
 class SignalModel(BaseModel):
-    id: str
+    id: str = Field(alias='$id')
     data: SignalData
 
 
