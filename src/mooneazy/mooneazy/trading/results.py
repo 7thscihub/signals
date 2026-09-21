@@ -39,7 +39,7 @@ class SignalModel(BaseModel):
 
 
 @validate_call()
-def get_candles(symbol: str, interval: str, start_time: str) -> list[dict]:
+def get_candles(symbol: str, interval: str, start_time: int, limit:int) -> list[dict]:
     candles = []
     parameters = {
         'interval': interval, 'start_time': start_time, 'symbol': symbol
@@ -57,7 +57,8 @@ def get_updated_signal(signal:SignalModel) -> dict | None:
     candles = get_candles(
         symbol=signal_data['symbol'],
         interval=signal_data['interval'],
-        start_time=signal_data['time']
+        start_time=signal_data['time'],
+        limit=1400
     )
     updated_signal_data = tps.get_results(
         candles=candles,
