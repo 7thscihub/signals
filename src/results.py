@@ -13,7 +13,7 @@ def main(context):
     try:
         table = SignalsTable()
         signal = table.get_signal(signal_id=signal_id)
-        if signa['data']['status'] == 'closed':
+        if signal['data']['status'] == 'closed':
             return context.res.json(signal)
 
         sginal_result = get_signal_results(signal)
