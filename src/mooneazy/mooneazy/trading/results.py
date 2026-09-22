@@ -39,22 +39,18 @@ class SignalModel(BaseModel):
 
 
 @validate_call()
-def get_candles(symbol: str, interval: str, start_time: int, limit:int) -> list[dict]:
-    candles = []
+def get_signal_candles(symbol: str, interval: str, start_time: int, limit:int) -> list[dict]:
     parameters = {
         'interval': interval, 'start_time': start_time, 'symbol': symbol
     }
-    candles = api.get_candles(parameters)
-    for candle in candles:
-        candles.append(Candle.model_validate(candle).model_dump())
-    return candles
+    return api.get_candles(parameters)
 
 
 @validate_call()
 def get_signal_results(signal:SignalModel) -> dict | None:
     signal_dict = signal.model_dump()
     signal_data = signal_dict['data']
-    candles = get_candles(
+    candles = get_signal_candles(
         symbol=signal_data['symbol'],
         interval=signal_data['interval'],
         start_time=signal_data['time'],

@@ -1,6 +1,6 @@
 import traceback
 from mooneazy.trading.results import get_signal_results
-from .appwrite_api.signals_table import SignalsTable 
+from .appwrite_api.signals_table import SignalsTable
 from .appwrite_api.messages import send_push_notifications
 
 TEST_SIGNAL_ID = '6ab244cc00375e76cf65'
@@ -16,7 +16,7 @@ def main(context):
         if signal['data']['status'] == 'closed':
             return context.res.json(signal)
         return context.res.json(signal)
-        sginal_result = get_signal_results(signal)
+        signal_result = get_signal_results(signal)
         if not signal_reults:
             return context.res.json(signal)
         table.update_signal(signal)
