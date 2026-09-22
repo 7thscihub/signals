@@ -5,7 +5,7 @@ from .appwrite_api.messages import send_push_notifications
 
 
 def main(context):
-    return context.res.json({'status:' "called"})
+    return context.res.json({'status:': "called"})
     results = {
         "pending_signals": None,
         "updated_signals": None,
