@@ -13,11 +13,9 @@ def main(context):
     }
     try:
         pending_signals = get_pending_signals()
-        return context.res.json(pending_signals)
-
         results['pending_signals'] = pending_signals
         updated_signals = get_updated_signals(pending_signals)
-        
+        return context.res.json(results)
         if updated_signals:
             results['updated_signals'] = updated_signals
             send_push_notifications(updated_signals)
