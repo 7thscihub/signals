@@ -5,12 +5,12 @@ from .appwrite_api.messages import send_push_notifications
 
 
 def main(context):
+    return context.res.json({'status:' "called"})
     results = {
         "pending_signals": None,
         "updated_signals": None,
-        'errors': None
+        "errors": None
     }
-    errors = None
     try:
         pending_signals = get_pending_signals()
         results['pending_signals'] = pending_signals
@@ -25,4 +25,5 @@ def main(context):
         context.log(errors)
         results['errors'] = errors
     return context.res.json(results)
+
 
