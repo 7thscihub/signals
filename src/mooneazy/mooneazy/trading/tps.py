@@ -41,9 +41,12 @@ def collect_signal_tps(
     tp_status_keys = sorted(tp_status_keys)
     tps_dict= {}
     for i in range(len(tp_keys)):
-        tp_key = tp_keys[i]
+        tp_key:str = tp_keys[i]
+        target = signal_data.get(tp_key, None)
+        if not target:
+            continue
         tp_details = {
-            'target': signal_data[tp_key],
+            'target': target,
             'status': signal_data[tp_status_keys[i]]
         }
         tps_dict[tp_key] = tp_details
