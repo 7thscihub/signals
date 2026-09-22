@@ -2,6 +2,12 @@ import copy
 from pydantic import validate_call
 
 
+TP_KEYS = ['tp1', 'tp2', 'tp3', 'tp4', 'tp5'],['tp1', 'tp2', 'tp3', 'tp4', 'tp5']
+TP_STATUS_KEYS = [
+    'tp1_status', 'tp2_status', 'tp3_status', 'tp4_status', 'tp5_status'
+]
+
+
 def touches(candle, value):
     return float(candle['high']) >= float(value) >= float(candle['low'])
 
@@ -28,10 +34,11 @@ def update_successful_tps(tps, current_candle):
             value['status'] = 'success'
 
 
-def collect_signal_tps(signal_data, tp_keys=None, tp_status_keys=None) -> dict[str, dict]:
-    tp_keys = sorted(tp_keys) or ['tp1', 'tp2', 'tp3', 'tp4', 'tp5']
-    tp_status_keys = sorted(tp_status_keys) or ['tp1_status', 'tp2_status', 'tp3_status', 'tp4_status', 'tp5_status']
-    tps_dict= {}
+def collect_signal_tps(
+        signal_data, tp_keys=TP_KEYS, tp_status_keys=TP_STATUS_KEYS
+    ) -> dict[str, dict]:
+    tp_keys = sorted(tp_keys)
+    tp_status_keys = sorted(tp_status_keys) or     tps_dict= {}
     for i in range(len(tp_keys)):
         tp_key = tp_keys[i]
         tp_details = {
@@ -41,7 +48,7 @@ def collect_signal_tps(signal_data, tp_keys=None, tp_status_keys=None) -> dict[s
         tps_dict[tp_key] = tp_details
 
     return tps_dict
- 
+
 
 def get_results(candles:list[dict], signal_data: dict) -> dict[str, dict]:
     """
