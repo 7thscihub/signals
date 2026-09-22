@@ -76,7 +76,7 @@ class SignalsTable:
             table_id=self.table_id,
             queries=[
                 Query.equal("status", 'pending'),
-                Query.equal("tp1_status", 'success')
+                Query.equal("tp1_status", 'success'),
                 Qwery.limit(limit)
             ]
         )
