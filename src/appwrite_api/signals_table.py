@@ -57,3 +57,31 @@ class SignalsTable:
         )
 
         return row.model_dump()
+
+    def get_closed_signals(self) ->list[dict]:
+        response = self.tablesDB.list_rows(
+            database_id=self.database_id,
+            table_id=self.table_id,
+            queries=[
+                Query.equal("status", 'closed'),
+                Qwery.limit(limit)
+            ]
+        )
+        rows = response.get("rows", [])
+        return [row.to_dict() for row in rows]
+
+    def get_partial_signals(self, limmit=10):
+        response = self.tablesDB.list_rows(
+            database_id=self.database_id,
+            table_id=self.table_id,
+            queries=[
+                Query.equal("status", 'pending'),
+                Query.equal("tp1_status", 'success')
+                Qwery.limit(limit)
+            ]
+        )
+        rows = response.get("rows", [])
+        return [row.to_dict() for row in rows]
+
+
+
