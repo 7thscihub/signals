@@ -2,7 +2,7 @@ import copy
 from pydantic import validate_call
 
 
-TP_KEYS = ['tp1', 'tp2', 'tp3', 'tp4', 'tp5'],['tp1', 'tp2', 'tp3', 'tp4', 'tp5']
+TP_KEYS = ['tp1', 'tp2', 'tp3', 'tp4', 'tp5']
 TP_STATUS_KEYS = [
     'tp1_status', 'tp2_status', 'tp3_status', 'tp4_status', 'tp5_status'
 ]
@@ -35,7 +35,7 @@ def update_successful_tps(tps, current_candle):
 
 
 def collect_signal_tps(
-        signal_data, tp_keys=TP_KEYS, tp_status_keys=TP_STATUS_KEYS
+    signal_data: dict, tp_keys:list=TP_KEYS, tp_status_keys: list=TP_STATUS_KEYS
     ) -> dict[str, dict]:
     tp_keys = sorted(tp_keys)
     tp_status_keys = sorted(tp_status_keys)
