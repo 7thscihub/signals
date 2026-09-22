@@ -51,7 +51,7 @@ def get_candles(symbol: str, interval: str, start_time: int, limit:int) -> list[
 
 
 @validate_call()
-def get_updated_signal(signal:SignalModel) -> dict | None:
+def get_signal_results(signal:SignalModel) -> dict | None:
     signal_dict = signal.model_dump()
     signal_data = signal_dict['data']
     candles = get_candles(
@@ -71,15 +71,12 @@ def get_updated_signal(signal:SignalModel) -> dict | None:
 
 
 @validate_call()
-def get_updated_signals(signals:list[dict]) -> list[dict]:
+def get_signals_signals(signals:list[dict]) -> list[dict]:
     updated_signals = []
     for signal in signals:
-
         if upddated_signal:= get_updated_signal(signal):
             upddated_signals.append(signal)
-    
     return updated_signals or none
-
 
 
 

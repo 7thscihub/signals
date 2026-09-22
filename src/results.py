@@ -1,25 +1,24 @@
 import traceback
-from mooneazy.trading.results import get_updated_signals
-from .appwrite_api.db import update_results, get_pending_signals
+from mooneazy.trading.results import get_signal_results
+from .appwrite_api.signals_table import SignalsTable 
 from .appwrite_api.messages import send_push_notifications
 
 
 def main(context):
-    # return context.res.json({'status:': "called"})
-    results = {
-        "pending_signals": None,
-        "updated_signals": None,
-        "errors": None
-    }
+    signal_id = context.req.query.get('id')
+    if not signal_id:
+        return context.res.text('Missing Signal ID', status_code=400)
+
     try:
-        pending_signals = get_pending_signals()
-        results['pending_signals'] = pending_signals
-        updated_signals = get_updated_signals(pending_signals)
-        return context.res.json(results)
-        if updated_signals:
-            results['updated_signals'] = updated_signals
-            send_push_notifications(updated_signals)
-            upddate_results(updated_signals)
+        table = SignalsTable()
+        signal = table.get_signald(signal_id=signal_id)
+        if signa['data']['status'] == 'closed':
+            return context.res.json(signal)
+
+        sginal_result = get_signal_results(signal)
+        if not signal_reults:
+            return context.res.json(signal)
+        table.update_signal(signal)
     except Exception as e:
         errors = traceback.format_exc()
         context.log(errors)

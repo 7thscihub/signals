@@ -12,7 +12,7 @@ from .models import SignalModel, ResultModel, SignalData, ResultData
 DATABASE_ID = os.environ.get("SIGNALS_DB_ID")
 TABLE_ID = os.environ.get("SIGNALS_TABLE_ID")
 SIGNALS_LIMIT = 10
-
+TEST_SIGNAL_ID = '6ab244cc00375e76cf65'
 
 @validate_call()
 def get_db_client()->TablesDB:
@@ -56,28 +56,35 @@ def get_latest_signals(table, limit=10):
     return [row.to_dict() for row in rows]
 
 
-def get_row(db_client: Callable, database_id, table_id, row_id):
-    result = db_client().get_row(
+@validate_call()
+def get_signal_dict_by_id(
+        signal_id: str = TEST_SIGNAL_ID, 
+        db_client: Callable = get_db_client, 
+        db_id:str = DATABASE_ID, 
+        table_id:str = TABLE_ID
+    ):
+    row = db_client().get_row(
         database_id=database_id,
         table_id=table_id,
-        row_id=row_id
+        row_id=signal_id
     )
-
+    return row.model_dump()
+   
 
 @validate_call()
-def update_row(
-        db_client: Callable, 
-        database_id: str, 
-        table_id: str , 
-        row_id: str, 
-        row_data: dict
+def update_signal(
+        signal: SignalModel,
+        db_client: Callable = get_db_client, 
+        database_id: str = DATABASE_ID, 
+        table_id: str = TABLE_ID , 
     ):
     result = db_client().update_row(
         database_id=database_id,
         table_id=table_id,
-        row_id=row_id,
-        data=SignalData.model_validate(row_data).model_dump()
+        row_id=signal.id,
+        data=signal.data.model_dump()
     )
+    return True
 
 
 @validate_call()
@@ -94,6 +101,7 @@ def create_row(
         row_id=row_id ,
         data=SignalData.model_validate(row_data).model_dump()
     )
+
 
 
 def update_signals(signals: list[dict]):
@@ -126,13 +134,13 @@ def get_latest_results(
         database_id: str = DATABASE_ID, 
         table_id: str = TABLE_ID,
         limit: int = 10
-    )->list[dict]:
+    ) ->list[dict]:
 
     response = db_client().list_rows(
         database_id=database_id,
         table_id=table_id,
         queries=[ 
-            Query.not_equal("is_open", True),
+            Query.equal("status", 'closed'),
             Qwery.limit(limit)
         ]
     )
@@ -162,20 +170,17 @@ def get_pending_signals(
     return signals
 
 
-def update_results(results:ResultData, database_id=DATABASE_ID, table_id=TABLE_ID):
-    valid_results, errors = get_valid_results(results)
-    if not valid_results:
-        return
-
-    for result in valid_results:
+@validate_call()
+def update_results(signals:SignalModel, db_client:Callable=get_db_client, database_id=DATABASE_ID, table_id=TABLE_ID):
+    for signal in signals:
         update_row(
             db_client=get_db_client,
             database_id=database_id,
             table_id=table_id,
             row_id=results.id,
             row_data={
-                'tp1_status': result.tp1_results,
-                'tp2_status': result.tp2_results,
+                'tp1_status': signal.data.tp1_status,
+                'tp2_status': signal.data.tp2_status,
             }
         )
     return valid_results, errors
