@@ -3,15 +3,16 @@ from mooneazy.trading.results import get_signal_results
 from .appwrite_api.signals_table import SignalsTable 
 from .appwrite_api.messages import send_push_notifications
 
+TEST_SIGNAL_ID = '6ab244cc00375e76cf65'
 
 def main(context):
-    signal_id = context.req.query.get('id')
+    signal_id = context.req.query.get('id', TEST_SIGNAL_ID)
     if not signal_id:
         return context.res.text('Missing Signal ID', status_code=400)
 
     try:
         table = SignalsTable()
-        signal = table.get_signald(signal_id=signal_id)
+        signal = table.get_signal(signal_id=signal_id)
         if signa['data']['status'] == 'closed':
             return context.res.json(signal)
 
