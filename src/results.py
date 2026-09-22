@@ -16,8 +16,8 @@ def main(context):
         if signal['data']['status'] == 'closed':
             return context.res.json(signal)
         # return context.res.json(signal)
-        signal_result = get_signal_results(signal)
-        if not signal_reults:
+        signal_results = get_signal_results(signal)
+        if not signal_results:
             return context.res.json(signal)
         table.update_signal(signal)
     except Exception as e:
