@@ -38,7 +38,8 @@ def collect_signal_tps(
         signal_data, tp_keys=TP_KEYS, tp_status_keys=TP_STATUS_KEYS
     ) -> dict[str, dict]:
     tp_keys = sorted(tp_keys)
-    tp_status_keys = sorted(tp_status_keys) or     tps_dict= {}
+    tp_status_keys = sorted(tp_status_keys)
+    tps_dict= {}
     for i in range(len(tp_keys)):
         tp_key = tp_keys[i]
         tp_details = {
