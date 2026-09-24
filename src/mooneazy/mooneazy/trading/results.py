@@ -34,7 +34,7 @@ class SignalData(BaseModel):
 
 
 class SignalModel(BaseModel):
-    id: Field(alias='$id')
+    id: str = Field(alias='$id')
     data: SignalData
 
 
