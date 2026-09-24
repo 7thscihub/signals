@@ -77,7 +77,7 @@ class SignalsTable:
         rows = response.get("rows", [])
         return [row.to_dict() for row in rows]
 
-    def get_pending_signals(self, limmit=10):
+    def get_pending_signals(self, limit=10):
         response = self.tablesDB.list_rows(
             database_id=self.database_id,
             table_id=self.table_id,
