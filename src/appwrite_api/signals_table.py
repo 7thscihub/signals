@@ -71,7 +71,7 @@ class SignalsTable:
             table_id=self.table_id,
             queries=[
                 Query.equal("status", 'closed'),
-                Qwery.limit(limit)
+                Query.limit(limit)
             ]
         )
         rows = response.get("rows", [])
@@ -84,7 +84,7 @@ class SignalsTable:
             queries=[
                 Query.equal("status", 'pending'),
                 Query.order_asc("$createdAt"),
-                Qwery.limit(limit)
+                Query.limit(limit)
             ]
         )
         rows = response.get("rows", [])
