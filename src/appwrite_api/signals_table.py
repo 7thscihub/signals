@@ -36,17 +36,21 @@ class SignalsTable:
             row_id=ID.unique(),
             data=data,
         )
-
         return row.model_dump()
-
+    
     def get_signal(self, signal_id: str) -> dict:
         row = self.tablesDB.get_row(
             database_id=self.database_id,
             table_id=self.table_id,
             row_id=signal_id,
         )
-
         return row.model_dump()
+
+    def get_pending_signal(self, signal_id):
+        signal = self.get_signal(signal_id)
+        if signal['data']['status'] != 'pending': 
+            return []
+        return signal
 
     def update_signal(self, signal_dict) -> dict:
         row = self.tablesDB.update_row(
@@ -55,10 +59,13 @@ class SignalsTable:
             row_id=signal_dict['id'],
             data=signal_dict['data'],
         )
-
         return row.model_dump()
+    
+    def update_signals(self, signals:list[dict]):
+        for signal in signals:
+            self.update_signal(signal_dict)
 
-    def get_closed_signals(self) ->list[dict]:
+    def get_closed_signals(self, limit=10) ->list[dict]:
         response = self.tablesDB.list_rows(
             database_id=self.database_id,
             table_id=self.table_id,
@@ -70,13 +77,13 @@ class SignalsTable:
         rows = response.get("rows", [])
         return [row.to_dict() for row in rows]
 
-    def get_partial_signals(self, limmit=10):
+    def get_pending_signals(self, limmit=10):
         response = self.tablesDB.list_rows(
             database_id=self.database_id,
             table_id=self.table_id,
             queries=[
                 Query.equal("status", 'pending'),
-                Query.equal("tp1_status", 'success'),
+                Query.order_asc("$createdAt"),
                 Qwery.limit(limit)
             ]
         )

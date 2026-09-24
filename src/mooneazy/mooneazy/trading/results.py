@@ -67,12 +67,12 @@ def get_signal_results(signal:SignalModel) -> dict | None:
 
 
 @validate_call()
-def get_signals_signals(signals:list[dict]) -> list[dict]:
-    updated_signals = []
+def get_new_results(signals:list[dict]) -> list[dict]:
+    results = []
     for signal in signals:
-        if upddated_signal:= get_updated_signal(signal):
-            upddated_signals.append(signal)
-    return updated_signals or none
+        if signal_results:= get_signal_results(signal):
+            new_results.append(signal_results)
+    return results
 
 
 
