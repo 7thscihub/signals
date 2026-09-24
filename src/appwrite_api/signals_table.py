@@ -74,7 +74,7 @@ class SignalsTable:
                 Query.limit(limit)
             ]
         )
-        rows = response.get("rows", [])
+        rows = response.rows
         return [row.to_dict() for row in rows]
 
     def get_pending_signals(self, limit=10):
@@ -87,7 +87,7 @@ class SignalsTable:
                 Query.limit(limit)
             ]
         )
-        rows = response.get("rows", [])
+        rows = response.rows
         return [row.to_dict() for row in rows]
 
 
