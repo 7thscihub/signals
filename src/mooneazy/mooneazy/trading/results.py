@@ -71,7 +71,7 @@ def get_new_results(signals:list[dict]) -> list[dict]:
     results = []
     for signal in signals:
         if signal_results:= get_signal_results(signal):
-            new_results.append(signal_results)
+            results.append(signal_results)
     return results
 
 
