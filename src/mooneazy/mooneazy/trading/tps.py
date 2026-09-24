@@ -20,12 +20,22 @@ def get_results_candles(signal):
     }
 
 
-def update_failed_tps(tps):
+def update_failed_tps(tps, results):
+    tps_status = {}
     for key, value in tps.items():
         # skip targets that have already been hit 
         if value['status'] == 'success':
+            tps_status[key] = 'success'
             continue
+
         value['status'] = 'failed'
+        tps_status[key] = 'failed'
+    if 'success' in tps_status.values()) and 'failed' in tps_status.values():
+        results['status'] = 'partial'
+    if 'success' not in tps_status.values():
+        results['status'] = 'failed'
+    if 'failed' not in tps_status.values():
+        results['status'] = 'success'
 
 
 def update_successful_tps(tps, current_candle):
@@ -35,7 +45,9 @@ def update_successful_tps(tps, current_candle):
 
 
 def collect_signal_tps(
-    signal_data: dict, tp_keys:list=TP_KEYS, tp_status_keys: list=TP_STATUS_KEYS
+        signal_data: dict, 
+        tp_keys:list=TP_KEYS, 
+        tp_status_keys: list=TP_STATUS_KEYS
     ) -> dict[str, dict]:
     tp_keys = sorted(tp_keys)
     tp_status_keys = sorted(tp_status_keys)

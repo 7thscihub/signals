@@ -30,7 +30,7 @@ class SignalData(BaseModel):
     tp2: float
     tp1_status: Literal['pending', 'success', 'failed']
     tp2_status: Literal['pending', 'success', 'failed']
-    status: Literal['pending', 'success', 'failed']
+    status: Literal['pending', 'partial', 'success', 'failed']
 
 
 class SignalModel(BaseModel):
