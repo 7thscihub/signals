@@ -25,7 +25,7 @@ def get_db_client()->TablesDB:
 
 
 class SignalsTable(BaseModel):
-    tablesDB: TablesDB = database_client()
+    tablesDB: TablesDB = get_db_client()
     database_id: str = DATABASE_ID
     table_id: str = TABLE_ID
 
