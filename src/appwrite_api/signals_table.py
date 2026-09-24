@@ -1,6 +1,6 @@
 import os
 from collections.abc import Callable
-from pydantic import validate_call
+from pydantic import validate_call, BaseModel
 from appwrite.client import Client
 from appwrite.id import ID
 from appwrite.services.tables_db import TablesDB
@@ -14,6 +14,7 @@ TABLE_ID = os.environ.get("SIGNALS_TABLE_ID")
 SIGNALS_LIMIT = 10
 TEST_SIGNAL_ID = '6ab244cc00375e76cf65'
 
+
 @validate_call()
 def get_db_client()->TablesDB:
     client = Client()
@@ -23,11 +24,10 @@ def get_db_client()->TablesDB:
     return TablesDB(client)
 
 
-class SignalsTable:
-    def __init__(self, database_client=get_db_client, database_id=DATABASE_ID, table_id=TABLE_ID):
-        self.tablesDB = database_client()
-        self.database_id = database_id
-        self.table_id = table_id
+class SignalsTable(BaseModel):
+    tablesDB: TablesDB = database_client()
+    database_id: str = DATABASE_ID
+    table_id: str = TABLE_ID
 
     def add_signal(self, data: dict) -> dict:
         row = self.tablesDB.create_row(

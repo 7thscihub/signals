@@ -1,6 +1,6 @@
 import copy
 from typing import Literal
-from pydantic import BaseModel, validate_call, RootModel
+from pydantic import BaseModel, validate_call, Field
 from ..candles_api.candles_api import api
 from . import tps
 
@@ -34,7 +34,7 @@ class SignalData(BaseModel):
 
 
 class SignalModel(BaseModel):
-    id: str
+    id: Field(alias='$id')
     data: SignalData
 
 
