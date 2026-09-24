@@ -24,10 +24,11 @@ def get_db_client()->TablesDB:
     return TablesDB(client)
 
 
-class SignalsTable(BaseModel):
-    tablesDB: TablesDB = get_db_client()
-    database_id: str = DATABASE_ID
-    table_id: str = TABLE_ID
+class SignalsTable:
+    def __init__(self, db_client=get_db_client, database_id = DATABASE_ID, table_id = TABLE_ID):
+        self.tablesDB = db_client()
+        self.database_id = database_id
+        self.table_id = table_id
 
     def add_signal(self, data: dict) -> dict:
         row = self.tablesDB.create_row(
