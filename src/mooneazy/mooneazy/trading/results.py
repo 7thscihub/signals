@@ -7,9 +7,14 @@ from . import models
 
 
 @validate_call()
-def get_signal_candles(symbol: str, interval: str, start_time: int, limit:int) -> list[dict]:
+def get_signal_candles(
+        symbol: str, interval: str, start_time: int, limit:int
+    ) -> list[dict]:
     parameters = {
-        'interval': interval, 'start_time': start_time, 'symbol': symbol
+        'interval': interval, 
+        'start_time': start_time, 
+        'symbol': symbol,
+        'limit': limit
     }
     return api.get_candles(parameters)
 
