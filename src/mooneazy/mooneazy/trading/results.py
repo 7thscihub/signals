@@ -25,12 +25,23 @@ class SignalData(BaseModel):
     time: int
     signal_type: str
     entry_price: float
+    direction: Literal['buy', 'sell']
     sl: float
     tp1: float
     tp2: float
     tp1_status: Literal['pending', 'success', 'failed']
     tp2_status: Literal['pending', 'success', 'failed']
     status: Literal['pending', 'partial', 'success', 'failed']
+
+# for the SignalData.status
+# failed: when no take profit target is hit before stop loss is hit
+# pending: when no take profit target is hit and stop loss has not been hit
+# partial: some take profit targets are hit but not all
+#
+# for tp status
+# pending: tp target not hit but stop loss not hit either
+# success: tp target hit before stop loss is hit
+# failed: stop loss hit before tp target hit
 
 
 class SignalModel(BaseModel):
