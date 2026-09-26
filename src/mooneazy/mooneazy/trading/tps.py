@@ -165,6 +165,8 @@ def get_results(candles, signal_data):
 
     # Find the first candle that touches the stop loss.
     for candle in candles:
+        if candle['time'] <= signal_data['time']:
+            continue
         if touches(candle, stop_loss['value']):
             stop_loss['time'] = candle['time']
             break
@@ -173,6 +175,8 @@ def get_results(candles, signal_data):
         value['time'] = None
 
         for candle in candles:
+            if candle['time'] <= signal_data['time']:
+                continue
             if touches(candle, value['target']):
                 value['time'] = candle['time']
                 break
