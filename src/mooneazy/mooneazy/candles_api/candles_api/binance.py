@@ -2,7 +2,6 @@ import requests
 from . import api_errors
 
 
-
 def get_candles_from_params(params: dict)->list[dict]:
 	"""
 	Fetch candlestick data from Binance API with either specified 
@@ -44,15 +43,16 @@ def get_candles_from_params(params: dict)->list[dict]:
 
 
 def get_parameters(parameters):
-		# print(f'from binance: params{parameters}')
-		if not parameters['symbol']:
-			raise api_errors.MissingParameters('symbol')
-		if not parameters['interval']:
-			raise api_errors.MissingParameters('interval')
-		if not 'start_time' in parameters and not 'limit' in parameters:
-			raise api_errors.MissingParameters(f'provide either limit or start time')
-
-		return parameters
+    # print(f'from binance: params{parameters}')
+    if not parameters.get('symbol'):
+        raise api_errors.MissingParameters('symbol')
+    if not parameters.get('interval'):
+        raise api_errors.MissingParameters('interval')
+    if not 'start_time' in parameters and not 'limit' in parameters:
+        raise api_errors.MissingParameters(f'provide either limit or start time')
+    parameters['startTime'] = parameters.get('start_time')
+    parameters['endTime'] = parameters.get('end_time')
+    return parameters
 
 
 def get_candles(parameters)->list[dict]:

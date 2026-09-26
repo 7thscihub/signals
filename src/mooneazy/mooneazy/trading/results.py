@@ -1,4 +1,5 @@
 import copy
+import time
 from typing import Literal
 from pydantic import BaseModel, validate_call
 from ..candles_api.candles_api import api
@@ -8,7 +9,8 @@ from . import models
 
 @validate_call()
 def get_signal_candles(
-        symbol: str, interval: str, start_time: int, limit:int
+        symbol: str, interval: str, 
+        start_time: int, limit:int = 1500
     ) -> list[dict]:
     parameters = {
         'interval': interval, 
@@ -27,7 +29,6 @@ def get_signal_results(signal:models.SignalModel) -> dict | None:
         symbol=signal_data['symbol'],
         interval=signal_data['interval'],
         start_time=signal_data['time'],
-        limit=500
     )
     updated_signal_data = tps.get_results(
         candles=candles,
