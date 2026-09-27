@@ -1,8 +1,9 @@
 import os
-from .appwrite_api.db import update_signals
+from .appwrite_api.signals_table import SignalsTable 
 from .appwrite_api.messages import send_push_notifications
 import traceback
 from mooneazy.scripts.scalper import get_scalping_signals
+
 
 def main(context):
     signals = []
@@ -24,7 +25,7 @@ def main(context):
 
     try:
         # update signals database and return latest_signals
-        db_signals, db_errors = update_signals(signals)
+        db_signals = SignalsTable().update_signals(signals)
         if db_signals:
             latest_signals = db_signals
         errors['updated_signals_errors'] = db_errors or None

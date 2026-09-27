@@ -38,7 +38,12 @@ class SignalsTable:
             data=data,
         )
         return row.model_dump()
-    
+
+    def add_signals(self, signals):
+        for signal in signals:
+            self.add_signal(signal)
+        return signals
+
     def get_signal(self, signal_id: str) -> dict:
         row = self.tablesDB.get_row(
             database_id=self.database_id,
