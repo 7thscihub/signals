@@ -29,7 +29,7 @@ def main(context):
         if db_signals:
             latest_signals = db_signals
     except Exception as e:
-        errors['db errors'] = db_errors traceback.format_exc()
+        errors['db errors'] = traceback.format_exc()
         context.log(traceback.format_exc()) 
 
     try:
