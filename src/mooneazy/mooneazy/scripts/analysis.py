@@ -5,7 +5,7 @@ from ..breakout_strategy.breakout_strategy import breakouts
 from ..ultimate_setups.ultimate_setups import signals as ult_signals
 from .config import Configs
 from . import htf_trend
-
+from . import util
 
 class Analyze:
     def __init__(
