@@ -7,6 +7,7 @@ from .config import Configs
 from . import htf_trend
 from . import util
 
+
 class Analyze:
     def __init__(
             self, 

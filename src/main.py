@@ -25,13 +25,12 @@ def main(context):
 
     try:
         # update signals database and return latest_signals
-        db_signals = SignalsTable().update_signals(signals)
+        db_signals = SignalsTable().add_signals(signals)
         if db_signals:
             latest_signals = db_signals
-        errors['updated_signals_errors'] = db_errors or None
-
     except Exception as e:
-        context.log(traceback.format_exc())
+        errors['db errors'] = db_errors traceback.format_exc()
+        context.log(traceback.format_exc()) 
 
     try:
         return context.res.json({
