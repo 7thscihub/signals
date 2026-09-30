@@ -40,9 +40,16 @@ class SignalsTable:
         return row.model_dump()
 
     def add_signals(self, signals):
+        new_signals = []
         for signal in signals:
-            self.add_signal(signal)
-        return signals
+            try:
+                self.add_signal(signal)
+            except AppwriteException as e:
+                if e.code == 409:
+                    continue
+                new_signals.append(signal)
+        return new_signals
+
 
     def get_signal(self, signal_id: str) -> dict:
         row = self.tablesDB.get_row(

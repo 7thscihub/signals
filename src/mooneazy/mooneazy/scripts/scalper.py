@@ -36,10 +36,12 @@ def get_active_signals(signals:list[dict])->list[dict]:
             active_signals.append(signal)
     return active_signals
 
+
 def get_scalping_signals():
     signals, error = get_signals_or_error()
     active_signals = get_active_signals(signals)
     return active_signals, error
+
 
 def print_active_signals(signals):
     active_signals = get_active_signals(signals)
