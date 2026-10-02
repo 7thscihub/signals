@@ -61,11 +61,10 @@ def get_lower_lows(candles, lookback):
     last_range = candles[candles.index(range_high):]
     range_low = get_range_low(last_range, lookback)
 
-    ll_range = last_range[:last_range.index(range_low) + lookback + 1]
-
     if range_low is None:
         return None
 
+    ll_range = last_range[:last_range.index(range_low) + lookback + 1]
     sorted_by_lows = sorted(ll_range, key=lambda k: k["low"])
 
     pivots = [c for c in sorted_by_lows if is_support_pivot(ll_range, c, lookback)]

@@ -38,8 +38,7 @@ def get_active_signals(signals:list[dict])->list[dict]:
 
 
 def get_scalping_signals():
-    signals, error = get_signals_or_error()
-    print(signals)
+    signals = get_signals()
     active_signals = get_active_signals(signals)
     return active_signals, error
 
