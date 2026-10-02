@@ -73,7 +73,7 @@ class SignalsTable:
             table_id=self.table_id,
             queries=[
                 Query.equal("status", 'closed'),
-                Query.order_asc("$createdAt")
+                Query.order_asc("$createdAt"),
                 Query.limit(limit)
             ]
         )
