@@ -9,13 +9,12 @@ def main(context):
     signals = []
     errors = {}
     latest_signals = []
-    envs = [ key for key in os.environ.keys() ]
-    context.log(envs)
+
     try:
-        signals, scalper_errors = get_scalping_signals()
-        errors['scalper_errors'] = scalper_errors or None
+        signals = get_scalping_signals()
     except Exception as e:
-        context.log(traceback.format_exc())
+        errors['scalper_errors'] = traceback.format_exc()
+        context.log(errors)
 
     try:
         # update signals database and return latest_signals
