@@ -39,7 +39,8 @@ class Configs:
         self.hs_fo_lookback = 3
         self.hs_tp_rrrs = (2, 5)
         self.sr_fib = 0.8
-        
+
+
 
 
 

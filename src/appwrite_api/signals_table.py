@@ -42,14 +42,9 @@ class SignalsTable:
     def add_signals(self, signals):
         new_signals = []
         for signal in signals:
-            try:
-                self.add_signal(signal)
-            except AppwriteException as e:
-                if e.code == 409:
-                    continue
-                new_signals.append(signal)
+            new_signal = self.add_signal(signal)
+            new_signals.append(new_signal)
         return new_signals
-
 
     def get_signal(self, signal_id: str) -> dict:
         row = self.tablesDB.get_row(
@@ -84,6 +79,7 @@ class SignalsTable:
             table_id=self.table_id,
             queries=[
                 Query.equal("status", 'closed'),
+                Query.order_asc("$createdAt")
                 Query.limit(limit)
             ]
         )

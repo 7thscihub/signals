@@ -19,9 +19,7 @@ def main(context):
 
     try:
         # update signals database and return latest_signals
-        db_signals = SignalsTable().add_signals(signals)
-        if db_signals:
-            latest_signals = db_signals
+        latest_signals = SignalsTable().add_signals(signals)
     except Exception as e:
         errors['db errors'] = traceback.format_exc()
         context.log(traceback.format_exc()) 
@@ -31,6 +29,7 @@ def main(context):
     except Exception as e:
         errors['push_notification_errors'] = e
         context.log(traceback.format_exc())
+
     try:
         return context.res.json({
             "signals": latest_signals or signals,

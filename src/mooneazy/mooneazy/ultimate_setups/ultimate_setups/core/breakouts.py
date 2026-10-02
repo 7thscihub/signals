@@ -113,20 +113,22 @@ class EngulfingBreakout(BreakOut):
 		high, low = self.get_lookback_range()
 		return low + (high - low) / 2
 
-	def get_bullish_breakout(self):
+	def is_bullish_breakout(self):
 		if self.is_strong_bullish() and self.breakout_candle["low"] <= self.lookback_mid():
 			return self.breakout_candle
-		return None
+		return False
 
-	def get_bearish_breakout(self):
+	def is_bearish_breakout(self):
 		if self.is_strong_bearish() and self.breakout_candle["high"] >= self.lookback_mid():
 			return self.breakout_candle
-		return None
+		return False
 
 
 class LevelBreakout:
 	"""
 	assumes that the candles argument excludes the active still-open candle from exchanges
+    checks whether the last candle(breakout candle) breaks a level 
+    either bullishly or bearishly 
 	"""
 
 	def __init__(self, candles, level, lookback):
@@ -155,6 +157,7 @@ class LevelBreakout:
 
 	def get_mid_body(self, candle):
 		return (candle["close"] - candle["open"]) / 2 + candle["open"]
+
 
 
 if __name__ == "__main__":
