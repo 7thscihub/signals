@@ -54,12 +54,6 @@ class SignalsTable:
         )
         return row.model_dump()
 
-    def get_pending_signal(self, signal_id):
-        signal = self.get_signal(signal_id)
-        if signal['data']['status'] != 'pending': 
-            return []
-        return signal
-
     def update_signal(self, signal_dict) -> dict:
         row = self.tablesDB.update_row(
             database_id=self.database_id,
