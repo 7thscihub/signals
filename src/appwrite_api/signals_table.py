@@ -1,5 +1,5 @@
 import os
-from collections.abc import Callable
+from pydantic import validate_call
 from appwrite.client import Client
 from appwrite.id import ID
 from appwrite.services.tables_db import TablesDB
@@ -14,7 +14,7 @@ SIGNALS_LIMIT = 10
 TEST_SIGNAL_ID = '6ab244cc00375e76cf65'
 
 
-@validate_call()
+@validate_call
 def get_db_client()->TablesDB:
     client = Client()
     client.set_endpoint(os.environ.get("APPWRITE_FUNCTION_API_ENDPOINT"))
