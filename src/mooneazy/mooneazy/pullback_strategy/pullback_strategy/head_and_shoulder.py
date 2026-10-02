@@ -20,7 +20,7 @@ def get_hs_buy_level(candles, lookback):
     left_shoulder = {}
     neck_line = {}
     lower_lows = pivots.get_lower_lows(candles, lookback)
-    if len(lower_lows) < 2:
+    if not lower_lows or len(lower_lows) < 2:
         return None, None
     
     left_shoulder_candle = lower_lows[-2]
