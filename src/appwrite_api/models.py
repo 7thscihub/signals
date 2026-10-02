@@ -19,12 +19,12 @@ class SignalData(BaseModel):
     sl: float
     tp1: float
     tp2: float
-    direction: str
+    direction: Literal['buy', 'sell']
     interval: str 
     signal_type: str
-    tp1_status: Literal['sucess', 'pending', 'failed']
-    tp2_status: Literal['sucess', 'pending', 'failed']
-    status: Literal['closed', 'pending']
+    tp1_status: Literal['sucess', 'pending', 'failed'] = 'pending'
+    tp2_status: Literal['sucess', 'pending', 'failed'] = 'pending'
+    status: Literal['pending', 'closed'] = 'pending'
 
 
 class SignalModel(BaseModel):

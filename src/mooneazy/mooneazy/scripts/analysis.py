@@ -133,7 +133,8 @@ def get_signals(supported_symbols=Configs().supported_symbols):
     for symbol in supported_symbols:
         if symbol_signals := Analyze(symbol).get_signals():
             signals.extend(symbol_signals)
-
-    return signals or None
+    for signal in signals:
+        signal['utc_time'] = util.unix_to_utc(signal['time'])
+    return signals
 
 

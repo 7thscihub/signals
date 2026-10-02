@@ -1,6 +1,5 @@
 import os
 from collections.abc import Callable
-from pydantic import validate_call, BaseModel
 from appwrite.client import Client
 from appwrite.id import ID
 from appwrite.services.tables_db import TablesDB
@@ -29,13 +28,14 @@ class SignalsTable:
         self.tablesDB = db_client()
         self.database_id = database_id
         self.table_id = table_id
-
-    def add_signal(self, data: dict) -> dict:
+    
+    @validate_call
+    def add_signal(self, data: SignalData) -> dict:
         row = self.tablesDB.create_row(
             database_id=self.database_id,
             table_id=self.table_id,
             row_id=ID.unique(),
-            data=data,
+            data=data.model_dump(),
         )
         return row.model_dump()
 
@@ -54,12 +54,13 @@ class SignalsTable:
         )
         return row.model_dump()
 
-    def update_signal(self, signal_dict) -> dict:
+    @validate_call
+    def update_signal(self, signal:SignalModel) -> dict:
         row = self.tablesDB.update_row(
             database_id=self.database_id,
             table_id=self.table_id,
-            row_id=signal_dict['id'],
-            data=signal_dict['data'],
+            row_id=signal.id,
+            data=signal.data.model_dump()
         )
         return row.model_dump()
     
