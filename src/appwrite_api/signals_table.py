@@ -31,13 +31,17 @@ class SignalsTable:
     
     @validate_call
     def add_signal(self, data: SignalData) -> dict:
-        row = self.tablesDB.create_row(
-            database_id=self.database_id,
-            table_id=self.table_id,
-            row_id=ID.unique(),
-            data=data.model_dump(),
-        )
-        return row.model_dump()
+        try:
+            row = self.tablesDB.create_row(
+                database_id=self.database_id,
+                table_id=self.table_id,
+                row_id=ID.unique(),
+                data=data.model_dump(),
+            )
+            return row.model_dump()
+        except AppwriteException as e:
+            if e.code == 409:
+                return data.model_dump()
 
     def add_signals(self, signals):
         new_signals = []
