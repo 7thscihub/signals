@@ -1,3 +1,4 @@
+from pydantic import validate_call
 from . import pivots
 from . import fakeouts
 from . import trading
@@ -92,11 +93,7 @@ def make_trade_signal(signal, tp_rrrs, sl_padding) -> dict:
     return trade_signal
 
 
-def get_latest_signals(
-        candles, 
-        pivot_lookback, 
-        fo_lookback=3,
-    )->list[dict]:
+def get_latest_signals(candles, pivot_lookback, fo_lookback=3)->list[dict]:
     buy_shoulder, buy_head = get_hs_buy_level(candles, lookback=pivot_lookback)
     sell_shoulder, sell_head = get_hs_sell_level(candles, lookback=pivot_lookback)
     buy_levels, sell_levels = None, None
@@ -133,12 +130,11 @@ class HeadAndShoulder:
         self._interval = interval
         self._candles = candles[-205:]
         self._configs = configs
-        self._pivot_lookback = configs.hs_pivot_lookback 
-        self._fo_lookback = configs.hs_fo_lookback
-        self._tp_rrrs = configs.hs_tp_rrrs
+        self._pivot_lookback = configs.pivot_lookback 
+        self._fo_lookback = configs.fo_lookback
+        self._tp_rrrs = configs.tp_rrrs
         self._sl_padding = configs.sl_padding
         self._sr_fib = configs.sr_fib
-    
 
     def buy_levels(self):
         return get_hs_buy_level(self._candles, self._pivot_lookback)
@@ -150,14 +146,20 @@ class HeadAndShoulder:
         signals = get_latest_signals(self._candles, self._pivot_lookback, self._fo_lookback)
         signals_with_intervals = [{ **signal, 'interval': self._interval } for signal in signals ]
         return signals_with_intervals
-
-    def latest_trade_signal(self):
+    
+    @validate_call(validate_return=True)
+    def latest_trade_signals(self) -> list[dict]:
         signals = self.latest_signals()
+        if not signals:
+            return []
         sr_signals = [signal for signal in signals if is_on_sr(
             candles=self._candles, lookback=self._pivot_lookback, signal=signal, fib=self._sr_fib
         )]
         trade_signals = get_trade_signals(
             sr_signals, tp_rrrs=self._tp_rrrs, sl_padding=self._sl_padding
         )
-        latest_signal = trade_signals[0] if trade_signals else None
-        return latest_signal
+        if not trade_signals:
+            return []
+        latest_signal = [trade_signals[0]] if trade_signals else None
+        return latest_signal or []
+        

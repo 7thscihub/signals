@@ -1,140 +1,148 @@
+from typing import Callable
+from pydantic import validate_call
 from ..candles_api.candles_api import api as candles_api
 from ..pullback_strategy.pullback_strategy import signals as pullback_signals
 from ..pullback_strategy.pullback_strategy.head_and_shoulder import HeadAndShoulder
 from ..breakout_strategy.breakout_strategy import breakouts
 from ..ultimate_setups.ultimate_setups import signals as ult_signals
+from ..trend_provider.trend_provider import TrendProvider
 from .config import Configs
 from . import htf_trend
 from . import util
+from ..validators.scalping_configs import ScalpingAnalysisConfigs, ScalpingStrategiesIntervals 
 
 
 class Analyze:
-    def __init__(
-            self, 
-            symbol, 
-            configs:object=None,
-            htf1_candles:list[dict]=[], 
-            htf2_candles:list[dict]=[], 
-            m30_candles:list[dict]=[], 
-            m15_candles:list[dict]=[],
-            htf_trends:tuple=('buy', 'sell')
+    def __init__(self, 
+                 symbol, interval, candles, trend, configs:ScalpingAnalysisConfigs=ScalpingAnalysisConfigs()
         ):
         self._symbol = symbol
-        self._configs = configs or Configs()
-        self._htf1_candles = htf1_candles or self.get_candles('4h', 500)
-        self._htf2_candles = htf2_candles or self.get_candles('1d', 500)
-        self._m30_candles = m30_candles or self.get_candles('30m', 500)
-        self._m15_candles = m15_candles or self.get_candles('15m', 500)
-        self._htf_trends = htf_trends or self.get_htf_trends()
-
-    def get_htf_trends(self):
-        fast_ema_period, slow_ema_period = self._configs.ema_cross_periods
-        trends = htf_trend.get_htf_trends(
-            htf1_candles=self._htf1_candles, 
-            htf2_candles=self._htf2_candles,
-            fast_ema_period=fast_ema_period,
-            slow_ema_period=slow_ema_period
-        )
-        return trends
-
-    def get_candles(self, interval, limit):
-        parameters = {
-            'symbol': self._symbol,
-            'interval': interval,
-            'limit': limit
-        }
-        return candles_api.get_candles(parameters=parameters)
+        self._interval = interval 
+        self._configs = configs
+        self._candles = candles
+        self._trend =  trend
     
     def get_pullback_signal(self)->dict[str, any] | None:
-        configs = self._configs
         signals = pullback_signals.get_trade_signal(
-            htf_candles = self._htf1_candles,
-            trading_tf_candles = self._m15_candles,
-            trading_interval = '15m',
-            lookback_values = configs.pullback_lookback_values,
-            fo_lookback = configs.fo_lookback,
-            tp_rrrs = configs.pullback_tp_rrrs,
-            sl_padding = configs.sl_padding
+            candles = self._candles,
+            interval = self._interval,
+            configs=self._configs.pullback_configs,
+            trend=self._trend,
         )
         return signals
     
     def get_breakout_signals(self):
-        # print(f"from analysis.analyze: symbol: {self._symbol}: htf_trends: {self._htf_trends}")
-        configs = self._configs
         signals = []
-        breakout_parameters = {
-            'htf_trends': self._htf_trends,
-            'fo_lookback': configs.breakout_lookback,
-            'min_opposite_candles': configs.min_opposite_candles,
-            'ema_cross_periods': configs.ema_cross_periods,
-            'hull_period': configs.hull_period,
-            'tp_rrrs': configs.breakout_tp_rrrs,
-            'sl_padding': configs.sl_padding,
-            'min_score': self._configs.min_score
-        }
-        m15_params = breakout_parameters | {
-            'interval': '15m', 'trading_tf_candles': self._m15_candles
-        }
-        m30_params = breakout_parameters | {
-            'interval': '30m', 'trading_tf_candles': self._m30_candles
-        }
-        m15_signal = breakouts.Breakouts(**m15_params).get_latest_trade_signal()
-        m30_signal = breakouts.Breakouts(**m30_params).get_latest_trade_signal()
-
-        if m15_signal:
-            signals.append(m15_signal)
-        if m30_signal:
-            signals.append(m30_signal)
+        signal = breakouts.Breakouts(
+            candles=self._candles, 
+            interval=self._interval, 
+            configs=self._configs.breakout_configs,
+            trend=self._trend 
+        ).get_latest_trade_signal()
+        if signal:
+            signals.append(signal)
         return signals 
 
     def get_ult_signal(self):
-        configs = self._configs
-        signal = ult_signals.get_ult_signal( 
-            htf1_candles=self._htf1_candles, 
-            htf2_candles=self._htf2_candles, 
-            trading_tf_candles=self._m30_candles, 
-            pivot_lookback=configs.ult_pivot_lookback, 
-            fo_lookback=configs.fo_lookback, 
-            ema_cross_periods=configs.ema_cross_periods,
-            tp_rrrs=configs.ult_tp_rrrs,
-            sl_padding=configs.sl_padding,
-            interval='30m'
-        )
-        return signal
-    
-    def get_hs_signal(self):
-        trade_signals = HeadAndShoulder(
-            candles=self._m30_candles, interval='30m', configs=self._configs
-        ).latest_trade_signal()
-        return trade_signals
-
-    def get_signals(self):
         signals = []
-        if breakout_signal := self.get_breakout_signals():
-            signals.extend(breakout_signal)
-        if ult_signal := self.get_ult_signal():
-            signals.append(ult_signal)
-        if pullback_signal := self.get_pullback_signal():
-            signals.append(pullback_signal)
-        if hs_signal := self.get_hs_signal():
-            signals.append(hs_signal)
-
-        if not signals:
-            return None
-        
-        for signal in signals:
-            signal['symbol'] = self._symbol
-            signal['time'] = int(signal['trigger_candle']['time'])
+        signal = ult_signals.get_ult_signal(
+            candles=self._candles,
+            configs=self._configs.ultimate_setups_configs, 
+            interval=self._interval
+        )
+        if signal:
+            signals.append(signal)
         return signals
 
+    def get_hs_signal(self):
+        signals = []
+        trade_signals = HeadAndShoulder(
+            candles=self._candles, 
+            interval=self._interval,
+            configs=self._configs.heads_and_shoulders_configs
+        ).latest_trade_signals()
+        if trade_signals:
+            signals.extend(trade_signals)
+        return signals
 
-def get_signals(supported_symbols=Configs().supported_symbols):
-    signals = []
-    for symbol in supported_symbols:
-        if symbol_signals := Analyze(symbol).get_signals():
-            signals.extend(symbol_signals)
-    for signal in signals:
-        signal['utc_time'] = util.unix_to_utc(signal['time'])
-    return signals
+    def get_signals(self, strategy_intervals:dict[str, list]):
+        strategies = {
+            'breakout': self.get_breakout_signals,
+            'pullback': self.get_pullback_signal,
+            'ult_setups': self.get_ult_signal,
+            'heads_and_shoulders': self.get_hs_signal
+        }
+        all_signals = []
+        for key, value in strategy_intervals.items():
+            if not self._interval in value:
+                continue
+            if signals:= strategies[key]():
+                all_signals.extend(signals)
+        for signal in all_signals:
+            signal['utc_time'] = util.unix_to_utc(signal['trigger_candle']['time'])
+            
+        return all_signals
+
+
+def get_candles(symbol, interval, limit):
+    parameters = {
+        'symbol': symbol,
+        'limit': limit,
+        'interval': interval
+    }
+    return candles_api.get_candles(parameters)
+
+
+@validate_call 
+def get_symbol_signals(
+        symbol:str, 
+        configs, 
+        trend:str='', 
+        strategy_intervals=dict[str, list]
+    ):
+    symbol_signals = []
+    intervals_list = []
+    for intervals in strategy_intervals.values():
+        intervals_list.extend(intervals)
+
+    unique_intervals = set(intervals_list)
+    for interval in unique_intervals:
+        candles = get_candles(
+            symbol, interval=interval, limit=configs.default_limit
+        )
+        signals = Analyze(
+            symbol=symbol, 
+            interval=interval, 
+            candles=candles, 
+            configs=configs, 
+            trend=trend
+        ).get_signals(strategy_intervals=strategy_intervals)
+        if signals:
+            symbol_signals.extend(signals)
+
+    return symbol_signals 
+
+
+
+@validate_call
+def get_scalping_signals(
+        symbols:list[str]=ScalpingAnalysisConfigs().supported_symbols,
+        configs: ScalpingAnalysisConfigs = ScalpingAnalysisConfigs(),
+        trend_provider:Callable=TrendProvider,
+        strategy_intervals: ScalpingStrategiesIntervals = ScalpingStrategiesIntervals()
+    ):
+    scalping_signals = []
+    strategy_intervals_dict = strategy_intervals.model_dump()
+    trend_intervals = configs.scalping_trend_intervals
+    for symbol in symbols:
+        trend = trend_provider(symbol, intervals=trend_intervals).get_trend()
+        symbol_signals = get_symbol_signals(symbol, configs, trend, strategy_intervals_dict)
+        scalping_signals.extend(symbol_signals)
+
+    return scalping_signals
+
+
+
+
 
 

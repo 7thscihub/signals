@@ -3,41 +3,48 @@ from .core.indicators import EmaCross
 from .core.trading import get_trade
 
 
-def get_ult_signal(
-        htf1_candles, 
-        htf2_candles, 
-        trading_tf_candles,
-        pivot_lookback, 
-        fo_lookback, 
-        ema_cross_periods, 
-        interval, 
-        sl_padding,
-        tp_rrrs
-    ):
-    fast_ema_period, slow_ema_period = ema_cross_periods
-    htf1_trend = 'buy' if EmaCross(
-        candles=htf1_candles, 
-        fast_ema_period=fast_ema_period,
-        slow_ema_period=slow_ema_period
-    ).is_bullish() else 'sell'
-    htf2_trend = 'buy' if  EmaCross(
-        candles=htf2_candles, 
-        fast_ema_period=fast_ema_period,
-        slow_ema_period=slow_ema_period
-    ).is_bullish() else 'sell'
+def get_ult_signal(candles, configs, interval, trend:str = ''):
     ult_setups = UltimateSetups(
-        candles=trading_tf_candles,
-        fo_lookback=fo_lookback,
-        pivot_lookback=pivot_lookback
+        candles=candles,
+        fo_lookback=configs.fo_lookback,
+        pivot_lookback=configs.pivot_lookback
     )
-    signal = ult_setups.get_in_trend_signal(htf1_trend, htf2_trend)
+    if not trend:
+        signal = ult_setups.get_signal()
+    else:
+        signal = ult_setups.get_in_trend_signal(trend=trend)
     if not signal:
         return None
     signal['interval'] = interval
-    tp1_rrr, tp2_rrr = tp_rrrs
+    tp1_rrr, tp2_rrr = configs.tp_rrrs
     trade_signal = get_trade(
-        signal=signal, tp1_rrr=tp1_rrr, tp2_rrr=tp2_rrr, sl_padding=sl_padding
+        signal=signal, tp1_rrr=tp1_rrr, tp2_rrr=tp2_rrr, sl_padding=configs.sl_padding
     )
     return trade_signal or None
-    
+
+
+def get_ult_signals(candles, configs, interval, trend:str = ''):
+    ult_setups = UltimateSetups(
+        candles=candles,
+        fo_lookback=configs.fo_lookback,
+        pivot_lookback=configs.pivot_lookback
+    )
+    if not trend:
+        signals = ult_setups.get_signals()
+    else:
+        signals = ult_setups.get_in_trend_signals(trend=trend)
+    if not signals:
+        return []
+    trade_signals = []
+    for signal in signals:
+        signal['interval'] = interval
+        tp1_rrr, tp2_rrr = configs.tp_rrrs
+        trade_signal = get_trade(
+            signal=signal, tp1_rrr=tp1_rrr, tp2_rrr=tp2_rrr, sl_padding=configs.sl_padding
+        )
+        if trade_signal:
+            trade_signals.append(trade_signal)
+    return trade_signals
+
+
 

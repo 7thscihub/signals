@@ -90,7 +90,7 @@ def is_cross(candle, fast_ema_values, slow_ema_values):
 
     return  fast_ema_value < slow_ema_value and (
         prev_fast_ema_value >= prev_slow_ema_value
-        )  
+    )  
     
 
 class BreakOut:
@@ -175,33 +175,18 @@ class BreakOut:
             score += 1
         return score
 
-    def is_valid(self, min_score=6):
+    def is_valid(self, min_score=8):
         return self._score >= min_score 
 
     def get_score(self):
         return self._score
 
-    def get_in_trend_breakout(self, 
-            min_score:int=6, htf1_trend:str|None=None, htf2_trend:str|None=None
-        )->dict[str:list]:
-        """
-        Returns breakout signal that respect either htf1 or htf2 trend
-        The returned signal is a dict with the trigger candle as trigger_candle
-        and the breakout score as score.
-        """
-        candle = self.breakout_candle
-        trigger_candle = None
+    def get_in_trend_breakout(self, min_score:int=8, trend:str='')->dict[str:list]:
         if not self.is_valid(min_score=min_score):
             return None
-        if is_bullish(candle) and (
-            htf1_trend == 'buy' or htf2_trend == 'buy'
-            ):
-            trigger_candle = candle
-        if not is_bullish(candle) and (
-            htf1_trend == 'sell' or htf2_trend == 'sell'
-            ):
-            trigger_candle = candle
-        if trigger_candle:
-            return {'trigger_candle': trigger_candle, 'score': self._score}
-        return None
-            
+        signal_trend = 'buy' if is_bullish(self.breakout_candle) else 'sell'
+        if signal_trend == trend:
+            return {'trigger_candle': self.breakout_candle, 'score': self._score}
+        return None 
+
+

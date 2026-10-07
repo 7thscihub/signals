@@ -2,7 +2,7 @@ import time
 import os
 import traceback
 import json
-from .analysis import get_signals
+from .analysis import get_scalping_signals as get_signals
 from . import util
 
 ALERT_UPTIME = 90
@@ -32,7 +32,7 @@ def get_active_signals(signals:list[dict])->list[dict]:
         if not signal:
             continue
         signal['utc_time'] = util.unix_to_utc(signal['trigger_time'])
-        if util.is_active_signal(signal["time"], signal["interval"]):
+        if util.is_active_signal(signal["trigger_time"], signal["interval"]):
             active_signals.append(signal)
     return active_signals
 

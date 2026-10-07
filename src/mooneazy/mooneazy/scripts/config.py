@@ -5,19 +5,11 @@ class Configs:
         self.supported_symbols = ['BTCUSDT', 'ETHUSDT', 'XAUUSDT']
 
         # trading candles parameters
-        self.pullback_strategy_parameters = ['15m', 500]
-        self.breakout_strategy_intervals = ['15m', '30m']
-        self.breakout_strategy_limit = 500
-        self.ult_trading_parameters = ['30m', 500]
-
-        # higher timeframe candles parameters
-        self.htf1_parameters = ['4h', 500]
-        self.htf2_parameters = ['1d', 500]
-
+        self.default_limit = 500
         # lookback settings
         self.fo_lookback = 5
         self.ult_pivot_lookback = 30
-        self.pullback_lookback_values = [10, 20]
+        self.pullback_lookback_values = [5, 10]
         self.breakout_lookback = 5
                 
         # indicator settings
@@ -39,8 +31,42 @@ class Configs:
         self.hs_fo_lookback = 3
         self.hs_tp_rrrs = (2, 5)
         self.sr_fib = 0.8
-
-
-
+        self.supported_scalping_intervals = {
+            'engulfing_breakout': ['15m', '30m',],
+            'ult_setups': ['30m'],
+            'pullback_strategy': ['15m'],
+            'heads_and_shoulders': ['30m']
+        }
+        self.scalping_trend_intervals =['4h', '1d', '1w']
+        self.ult_setups_configs = {
+            'intervals': ['30m'],
+            'pivot_lookback': 30,
+            'fo_lookback': 5,
+            'tp_rrrs': (1.5, 3),
+            'sl_padding': 0.001
+        }
+        self.engulfing_breakout_configs = {
+            'fo_lookback': 5,
+            'ema_cross_periods': (8, 20),
+            'min_opposite_candles': 2,
+            'hull_period': 55,
+            'min_score': 8,
+            'tp_rrrs': (2, 5),
+            'sl_padding': 0.001
+        }
+        self.lookback_configs = {
+            'intervals': ['15m', '30m'],
+            'lookback_values': (5, 10),
+            'fib_level': 0.3,
+            'tp_rrrs': (2, 5),
+            'sl_padding': 0.001,
+        }
+        self.heads_and_shoulders_configs = {
+            'intervals': ['30m'],
+            'fo_lookback': 3,
+            'sr_level': 0.8,
+            'pivot_lookback': 5,
+            'tp_rrrs': (2, 5),
+        }
 
 

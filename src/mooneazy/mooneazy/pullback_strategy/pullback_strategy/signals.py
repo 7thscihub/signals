@@ -1,13 +1,21 @@
+from typing import Literal
+from pydantic import BaseModel 
 from .pullback import get_valid_pullback_level
 from .fakeouts import get_active_signals
 from .trading import get_trade
 
 
-def make_trade_signal(signal, tp_rrrs, sl_padding) -> dict:
-    signal_type = (
-        'impulse_pullback_' + signal['signal_type']
-    )
+class Configs(BaseModel):
+    pullback_lookback_values: tuple[int, int] = (5, 5)
+    fo_lookback: int = 5
+    tp_rrrs: tuple[float, float] = (2.0, 5.0)
+    sl_padding: float = 0.001
+
+
+def make_trade_signal(signal: dict, tp_rrrs: tuple, sl_padding: float) -> dict:
+    signal_type = 'impulse_pullback_' + signal['signal_type']
     signal['signal_type'] = signal_type
+    
     trade_signal = get_trade(
         signal=signal, 
         tp1_rrr=tp_rrrs[0], 
@@ -18,51 +26,47 @@ def make_trade_signal(signal, tp_rrrs, sl_padding) -> dict:
 
 
 def get_trade_signal(
-        htf_candles, 
-        trading_tf_candles, 
-        trading_interval: str = '15min', 
-        ema_periods: tuple = (8, 20), 
-        lookback_values: tuple = (5, 5), 
-        fo_lookback: int = 5,
-        tp_rrrs: tuple = (2, 5),
-        sl_padding: int = 0.001,
-    )->dict[str, any] | None:
-    
-    slow_ema, fast_ema = ema_periods
-    lookback_left, lookback_right = lookback_values
+        candles, 
+        interval: str = '15min',  
+        configs = Configs(),
+        trend: Literal['buy', 'sell', ''] = ''
+    ) -> dict[str, any] | None:
 
+    lookback_left, lookback_right = configs.pullback_lookback_values 
     pullback_level = get_valid_pullback_level(
-        htf_candles, trading_tf_candles, slow_ema, fast_ema, 
-        lookback_left, lookback_right
+        candles=candles, 
+        lookback_left=lookback_left, 
+        lookback_right=lookback_right,
+        trend=trend
     )
-    # print(f'pullback_level: {pullback_level}')
+
     if not pullback_level:
         return None
+
     kwargs = {
-        'candles': trading_tf_candles, 
-        'interval': trading_interval,
+        'candles': candles, 
+        'interval': interval,
         'buy_levels': [],
         'sell_levels': [],
-        'fo_lookback': fo_lookback,
+        'fo_lookback': configs.fo_lookback,
     }
     
-    if pullback_level['is_bullish'] == True:
+    if pullback_level['direction'] == 'buy':
         kwargs['buy_levels'].append(pullback_level['pullback_pivot'])
-    if pullback_level['is_bullish'] == False:
+    elif pullback_level['direction'] == 'sell':
         kwargs['sell_levels'].append(pullback_level['pullback_pivot'])
 
     active_signals = get_active_signals(**kwargs)
     if not active_signals:
         return None
-    sorted_signals = sorted(active_signals, key=lambda k :k['time'], reverse=True)
-    active_signal = sorted_signals[0] | {'tp_rrrs': tp_rrrs}
+
+    sorted_signals = sorted(active_signals, key=lambda k: k['time'], reverse=True)
+    active_signal = sorted_signals[0] | {'tp_rrrs': configs.tp_rrrs}
     trade_signal = make_trade_signal(
         signal=active_signal,
-        interval=trading_interval,
-        sl_padding=sl_padding,
-        tp_rrrs=tp_rrrs
+        tp_rrrs=configs.tp_rrrs,
+        sl_padding=configs.sl_padding
     )
 
     return trade_signal or None
-
 
