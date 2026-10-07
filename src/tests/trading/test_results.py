@@ -74,7 +74,6 @@ def test_get_signal_results_returns_updated_signal():
         symbol='BTCUSDT',
         interval='30m',
         start_time=1788768000000,
-        limit=500,
     )
 
     mock_get_results.assert_called_once_with(
@@ -100,7 +99,6 @@ def test_get_signal_results_returns_none_when_unchanged():
         symbol='BTCUSDT',
         interval='30m',
         start_time=1788768000000,
-        limit=500,
     )
 
     mock_get_results.assert_called_once_with(

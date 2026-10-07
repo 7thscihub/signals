@@ -80,7 +80,7 @@ CANDLES_TP1_THEN_TP2 = [
 
 CANDLES_SL_THEN_TP1 = [
     {
-        'time': 1000,
+        'time': 1001,
         'open': 100,
         'high': 101,
         'low': 94,

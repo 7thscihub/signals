@@ -9,8 +9,10 @@ from . import models
 
 @validate_call()
 def get_signal_candles(
-        symbol: str, interval: str, 
-        start_time: int, limit:int = 1500
+        symbol: str, 
+        interval: str, 
+        start_time: int, 
+        limit:int = 1500
     ) -> list[dict]:
     parameters = {
         'interval': interval, 

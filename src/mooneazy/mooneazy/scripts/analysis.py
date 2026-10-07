@@ -80,7 +80,7 @@ class Analyze:
                 all_signals.extend(signals)
         for signal in all_signals:
             signal['utc_time'] = util.unix_to_utc(signal['trigger_candle']['time'])
-            
+            signal['symbol'] = self._symbol
         return all_signals
 
 
