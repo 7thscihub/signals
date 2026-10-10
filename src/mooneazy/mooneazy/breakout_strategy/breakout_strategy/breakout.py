@@ -178,15 +178,13 @@ class BreakOut:
     
     def calculate_score(self):
         score = 0
+        if not self.is_cross() or not self.breaks_emas():
+            return 0
         if self.is_engulfing():
             score += 5
-        if self.breaks_emas():
-            score += 1
-        else:
-            return 0
+        if self.is_cross:
+            score += 2
         if self.is_tight_hull(): 
-            score += 1
-        if self.is_cross():
             score += 1
         if self.is_tight_fast_emas():
             score += 1

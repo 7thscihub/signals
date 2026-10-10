@@ -121,7 +121,6 @@ def get_symbol_signals(
     return symbol_signals 
 
 
-
 @validate_call
 def get_scalping_signals(
         symbols:list[str]=ScalpingAnalysisConfigs().supported_symbols,
