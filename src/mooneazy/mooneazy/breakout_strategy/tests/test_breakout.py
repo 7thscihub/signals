@@ -1,5 +1,6 @@
-from mooneazy.breakout_strategy.breakout_strategy.breakout import BreakOut, is_engulfing_breakout, breaks_emas, is_cross
-from mooneazy.breakout_strategy.tests.test_data import breakout_data
+from ..breakout_strategy.breakout_strategy.breakout import BreakOut, is_engulfing_breakout, breaks_emas, is_cross
+from ..breakout_strategy.tests.test_data import breakout_data
+
 
 def test_is_engulfing_breakout():
     breakout_candles = breakout_data.score_5_data['breakout_candles']

@@ -27,7 +27,7 @@ class BreakoutConfigs(BaseModel):
     ema_cross_periods: tuple[int, int] = (8, 20)
     hull_period: int = 55
     min_opposite_candles: int = 2 
-    min_score: int = 8
+    min_score: int = 5
     tp_rrrs: tuple = (2, 5)
     breakout_intervals: list = ['30m', '15m']
     trend: Literal['buy', 'sell', ''] = ''
@@ -37,13 +37,15 @@ class BreakoutConfigs(BaseModel):
 class PullbackConfigs(BaseModel):
     model_config = ConfigDict(from_attributes=True) 
 
-    pullback_lookback_values: tuple[int, int] = (5, 10)
+    pullback_lookback_values: tuple[int, int] = (5, 15)
     fo_lookback: int = 3
     min_fib: float = 0.382
     max_fib: float = 0.7
     tp_rrrs: tuple[float, float] = (2, 5)
     sl_padding: float = 0.001
-
+    range_lookback: int = 110
+    min_follow_up_retracement_fib: float = 0.7
+    
 
 class HeadsAndShouldersConfigs(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -57,8 +59,9 @@ class HeadsAndShouldersConfigs(BaseModel):
 
 class ScalpingAnalysisConfigs(BaseModel):
     model_config = ConfigDict(from_attributes=True)
-
-    supported_symbols:list = ['BTCUSDT', 'ETHUSDT', 'XAUUSDT']
+    
+    sr_pivot_lookback: int = 30
+    supported_symbols:list = ['XAUUSDT']
     default_limit:int = 500
     ema_cross_periods:tuple = (8, 20)
 
@@ -69,7 +72,7 @@ class ScalpingAnalysisConfigs(BaseModel):
         'heads_and_shoulders': ['30m']
     }
 
-    scalping_trend_intervals: list = ['4h', '1d', '1w']
+    scalping_trend_intervals: list = ['4h']
     heads_and_shoulders_configs: HeadsAndShouldersConfigs = HeadsAndShouldersConfigs()
     pullback_configs: PullbackConfigs = PullbackConfigs()
     breakout_configs: BreakoutConfigs = BreakoutConfigs()

@@ -3,7 +3,7 @@ from pydantic import validate_call
 from . import breakout
 from .emas import EmaCross
 from .hma import BreakoutHMA
-from .models import BreakoutConfigs
+from ...models.breakouts import BreakoutConfigs
 from . import util
 
 

@@ -10,13 +10,10 @@ class BreakoutConfigs(BaseModel):
     min_opposite_candles: int = 2 
     min_score: int = 8
     tp_rrrs: tuple = (2, 5)
-    breakout_intervals: list = ['30m', '15m']
-    trend: Literal['buy', 'sell', ''] = ''
+    breakout_intervals: list = ['30m', '15m'] 
     sl_padding: float = 0.001
 
 
 class EmaModel(BaseModel):
     time: int
     value: float
-
-

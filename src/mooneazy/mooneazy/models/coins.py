@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
 
-class Asset(BaseModel):
+class Coin(BaseModel):
     name: str 
     symbol: str 
     can_dca: bool 
@@ -11,7 +11,7 @@ class Asset(BaseModel):
     swing_intervals: list[str] = Field(default_factory=list)
 
 
-class AltCoin(Asset):
+class AltCoin(Coin):
     can_scalp: bool = False 
     can_swing: bool = True 
     can_dca: bool = True 
@@ -19,14 +19,13 @@ class AltCoin(Asset):
     swing_intervals: list[str] = ['8h', '1d']
 
 
-class LargeCap(Asset):
+class LargeCap(Coin):
     can_dca: bool = True 
     can_swing: bool = True
     can_scalp: bool = True
     dca_intervals: list[str] = ['1d', '3d']
     scalping_intervals: list[str] = ['15m', '30m']
     swing_intervals: list[str] = ['4h', '8h', '12h']
-
 
 
 

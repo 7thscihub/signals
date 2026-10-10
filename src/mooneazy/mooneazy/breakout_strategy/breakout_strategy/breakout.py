@@ -28,12 +28,31 @@ def is_valid_min_oposite(lookback_candles, breakout_candle, min_oposit=None):
         return True
     return False
 
+def is_bad_candle(candle, range_high, range_low, multiplier: float=(0.5, 1.0)):
+    """
+    a bad candle is either too big or stretches too far beyond 
+    the range of the lookback candles.
+    """
+    range_size = range_high - range_low
+    close_multiplier = max(multiplier)
+    hl_multiplier = min(multiplier)
+    close_safe_zone_size = range_size * close_multiplier
+    hl_safe_zone_size = range_size * hl_multiplier
+    if is_bullish(candle):
+        safe_close = range_high + close_safe_zone_size
+        safe_low = range_low - hl_safe_zone_size
+        return candle['close'] > safe_close or candle['low'] < safe_low
+    safe_close = range_low - close_safe_zone_size
+    saffe_high = range_high + hl_safe_zone_size
+    return candle['close'] < safe_close or candle['high'] > saffe_high
+
 
 def is_engulfing_breakout(lookback_candles, breakout_candle, min_opposit):
     max_high = max(candle['high'] for candle in lookback_candles)
     min_low = min(candle['low'] for candle in lookback_candles)
     mid_range = (max_high - min_low) / 2 + min_low
-    
+    if is_bad_candle(breakout_candle, range_high=max_high, range_low=min_low):
+        return False
     if not is_valid_min_oposite(lookback_candles, breakout_candle, min_opposit):
         return False
     if is_bullish(breakout_candle):

@@ -1,15 +1,13 @@
 from typing import Callable
 from pydantic import validate_call
 from ..candles_api.candles_api import api as candles_api
-from ..pullback_strategy.pullback_strategy import signals as pullback_signals
+from ..pullback_strategy.pullback_strategy.signals import Pullback 
 from ..pullback_strategy.pullback_strategy.head_and_shoulder import HeadAndShoulder
 from ..breakout_strategy.breakout_strategy import breakouts
 from ..ultimate_setups.ultimate_setups import signals as ult_signals
 from ..trend_provider.trend_provider import TrendProvider
-from .config import Configs
-from . import htf_trend
 from . import util
-from ..validators.scalping_configs import ScalpingAnalysisConfigs, ScalpingStrategiesIntervals 
+from ..models.scalping_configs import ScalpingAnalysisConfigs, ScalpingStrategiesIntervals 
 
 
 class Analyze:
@@ -23,12 +21,12 @@ class Analyze:
         self._trend =  trend
     
     def get_pullback_signal(self)->dict[str, any] | None:
-        signals = pullback_signals.get_trade_signal(
+        signals = Pullback(
             candles = self._candles,
             interval = self._interval,
             configs=self._configs.pullback_configs,
             trend=self._trend,
-        )
+        ).get_trade_signals()
         return signals
     
     def get_breakout_signals(self):
@@ -135,7 +133,7 @@ def get_scalping_signals(
     strategy_intervals_dict = strategy_intervals.model_dump()
     trend_intervals = configs.scalping_trend_intervals
     for symbol in symbols:
-        trend = trend_provider(symbol, intervals=trend_intervals).get_trend()
+        trend = trend_provider(symbol, configs=configs).get_trend()
         symbol_signals = get_symbol_signals(symbol, configs, trend, strategy_intervals_dict)
         scalping_signals.extend(symbol_signals)
 

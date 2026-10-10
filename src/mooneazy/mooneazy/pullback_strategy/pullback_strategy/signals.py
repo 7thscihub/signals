@@ -1,7 +1,7 @@
 from typing import Literal
 from pydantic import BaseModel 
 from .pullback import get_valid_pullback_level
-from .fakeouts import get_active_signals
+from .fakeouts import get_all_signals
 from .trading import get_trade
 
 
@@ -26,12 +26,8 @@ def make_trade_signal(signal: dict, tp_rrrs: tuple, sl_padding: float) -> dict:
 
 
 def get_trade_signal(
-        candles, 
-        interval: str = '15min',  
-        configs = Configs(),
-        trend: Literal['buy', 'sell', ''] = ''
+        candles,  interval: str, trend: str, configs = Configs()
     ) -> dict[str, any] | None:
-
     lookback_left, lookback_right = configs.pullback_lookback_values 
     pullback_level = get_valid_pullback_level(
         candles=candles, 
@@ -41,11 +37,10 @@ def get_trade_signal(
     )
 
     if not pullback_level:
-        return None
+        return []
 
     kwargs = {
         'candles': candles, 
-        'interval': interval,
         'buy_levels': [],
         'sell_levels': [],
         'fo_lookback': configs.fo_lookback,
@@ -56,17 +51,59 @@ def get_trade_signal(
     elif pullback_level['direction'] == 'sell':
         kwargs['sell_levels'].append(pullback_level['pullback_pivot'])
 
-    active_signals = get_active_signals(**kwargs)
-    if not active_signals:
-        return None
+    all_signals = get_all_signals(**kwargs)
+    if not all_signals:
+        return []
 
-    sorted_signals = sorted(active_signals, key=lambda k: k['time'], reverse=True)
-    active_signal = sorted_signals[0] | {'tp_rrrs': configs.tp_rrrs}
+    sorted_signals = sorted(
+        all_signals, key=lambda k: k['trigger_candle']['time'], reverse=True
+    )
+    latest_signal = sorted_signals[0] | {'tp_rrrs': configs.tp_rrrs}
+    latest_signal['interval'] = interval
     trade_signal = make_trade_signal(
-        signal=active_signal,
+        signal=latest_signal,
         tp_rrrs=configs.tp_rrrs,
         sl_padding=configs.sl_padding
     )
 
-    return trade_signal or None
+    return trade_signal or []
+
+
+
+class Pullback:
+    def __init__(self, candles, interval: str, trend: str, configs = Configs()):
+        self._candles = candles
+        self._interval = interval
+        self._trend = trend
+        self._configs = configs
+        self._range_lookback = self._configs.range_lookback
+    
+    def get_trade_signals(self):
+        signals = []
+        candles = self._candles
+        len_candles = len(candles)
+        if len_candles <= self._range_lookback:
+            return signals
+        for candle_index in range(self._range_lookback, len(candles)-1):
+            candle_signal = get_trade_signal(
+                candles=candles[:candle_index + 1],
+                interval=self._interval,
+                trend=self._trend,
+                configs=self._configs
+            )
+            if candle_signal:
+                signals.append(candle_signal)
+        return signals 
+  
+    def get_latest_signals(self):
+        signals = self.get_trade_signals()
+        if signals:
+            return [signals[-1]]
+        return []
+
+
+
+
+
+
 
