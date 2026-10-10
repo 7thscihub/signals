@@ -61,8 +61,8 @@ class ScalpingAnalysisConfigs(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     
     sr_pivot_lookback: int = 30
-    supported_symbols:list = ['BTCUSDT', 'ETHUSDT', 'XAUUSDT']
-    default_limit:int = 500
+    supported_symbols:list = ['BTCUSDT','XAUUSDT', 'BTCUSDT']
+    default_limit:int = 1500
     ema_cross_periods:tuple = (8, 20)
 
     strategy_intervals: dict = {
