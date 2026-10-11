@@ -2,7 +2,7 @@ from ..candles_api.candles_api import api
 from .trend_from_emas import get_trend_from_emas 
 from ..models.scalping_configs import ScalpingAnalysisConfigs 
 from ..ultimate_setups.ultimate_setups.core import pivots
-
+from ..models.candles import Candle 
 
 def get_candles(symbol, interval, limit=200):
     parameters = {
@@ -26,10 +26,9 @@ def get_trend_from_htf_emas(symbol, intervals: list = ['4h', '1d', '1w'], ema_pe
     return None
 
 
-def get_current_price(symbol):
-    latest_candle = get_candles(symbol=symbol, interval='1m', limit=2)[-1]
-    return latest_candle['close']
-
+def get_current_candle(symbol, inerval='4h'):
+    return get_candles(symbol=symbol, interval='1m', limit=2)[-1]
+    
 
 def get_sr_pivots(candles, pivot_lookback):
     support_pivot = pivots.get_lows(candles, pivot_lookback)[-1]
@@ -37,10 +36,24 @@ def get_sr_pivots(candles, pivot_lookback):
     return support_pivot, resistance_pivot
 
 
-def get_trend_from_sr(support_pivot, resistance_pivot, current_price):
-    if support_pivot['close'] >= current_price >= support_pivot['low']:
+def touches(candle, level):
+    return float(candle['high']) > float(level) > float(candle['low'])
+
+
+def get_trend_from_sr(support_pivot:Candle, resistance_pivot:Candle, current_candle:Candle):
+    sh = support_pivot['close']
+    sl = support_pivot['low']
+    rh = resistance_pivot['high']
+    rl = resistance_pivot['close']
+    cc = current_candle
+
+    if cc['close'] > sl and (
+        touches(cc, sh) or touches(cc, sl) or (sh > cc['close'] > sl)
+    ):
         return 'buy'
-    if resistance_pivot['close'] >= current_price >= resistance_pivot['high']:
+    if cc['close'] > rl and (
+        touches(cc, rh) or touches(cc, rl) or (rh > cc['close'] > rl)
+    ):
         return 'sell'
     return None 
 
@@ -55,11 +68,17 @@ class TrendProvider:
         self._symbol = symbol
         self._configs = configs
         self._intervals = self._configs.scalping_trend_intervals
-        self._current_price = current_price or get_current_price(symbol=symbol)
         self._sr_pivots = sr_pivots
         self._ema_periods = self._configs.ema_cross_periods
         self._pivot_lookback = self._configs.sr_pivot_lookback 
         self._candles = self.fetch_candles()
+
+    def get_current_candle(self):
+        return get_candles(
+            symbol=self._symbol, 
+            interval=self._configs.default_interval, 
+            limit=2
+        )[-1]
 
     def fetch_candles(self):
         candles: list[list[dict]] = []
@@ -95,8 +114,8 @@ class TrendProvider:
 
     def get_trend_from_sr(self):
         support_pivot, resistance_pivot = self.get_sr_pivots()
-        current_price = self._current_price
-        return get_trend_from_sr(support_pivot, resistance_pivot, current_price)
+        current_candle = self.get_current_candle()
+        return get_trend_from_sr(support_pivot, resistance_pivot, current_candle)
 
     def get_trend(self):
         return self.get_trend_from_sr() or self.get_trend_from_emas()
