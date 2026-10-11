@@ -27,7 +27,7 @@ class BreakoutConfigs(BaseModel):
     ema_cross_periods: tuple[int, int] = (8, 20)
     hull_period: int = 55
     min_opposite_candles: int = 2 
-    min_score: int = 5
+    min_score: int = 8
     tp_rrrs: tuple = (2, 5)
     breakout_intervals: list = ['30m', '15m']
     trend: Literal['buy', 'sell', ''] = ''

@@ -127,35 +127,30 @@ class BreakOut:
 
         self._hull_touches = self.get_hull_touches()
         self._score = self.calculate_score()
-        
 
     def is_cross(self):
-        return is_cross(
-            self.breakout_candle, 
-            self.fast_ema_values, 
-            self.slow_ema_values
-        )
+        return is_cross(self.breakout_candle, self.fast_ema_values, self.slow_ema_values)
 
     def get_hull_touches(self):
         return count_indicator_touches(
             candles=self.breakout_candles,
             indicator_values=self.breakout_hull_values 
         )
-    
-    def is_tight_hull(self, min_touches=3):
+ 
+    def is_tight_hull(self, min_touches=4):
         hull_touches = self._hull_touches
         if not min_touches:
             min_touches = len(self.breakout_candles)/2
         return hull_touches >= min_touches
-    
-    def is_tight_fast_emas(self, min_touches=3):  
+ 
+    def is_tight_fast_emas(self, min_touches=4):  
         touches = count_indicator_touches(
             candles=self.breakout_candles,
             indicator_values=self.fast_ema_values[-len(self.breakout_candles):]
         )
         return is_tight_indicator(touches, min_touches=min_touches)
 
-    def is_tight_slow_emas(self, min_touches=3):
+    def is_tight_slow_emas(self, min_touches=4):
         touches = count_indicator_touches(
             candles=self.breakout_candles,
             indicator_values=self.slow_ema_values[-len(self.breakout_candles):]
@@ -164,25 +159,25 @@ class BreakOut:
 
     def breaks_emas(self):
         return breaks_emas(
-            self.breakout_candle, 
-            self.fast_ema_values[-1], 
-            self.slow_ema_values[-1]
+            self.breakout_candle, self.fast_ema_values[-1], self.slow_ema_values[-1]
         )
-    
+ 
     def is_engulfing(self):
         return is_engulfing_breakout(
             self.lookback_candles, 
             self.breakout_candle, 
             self.min_opposit
         )
-    
+ 
     def calculate_score(self):
         score = 0
-        if not self.is_cross() or not self.breaks_emas():
+        if not self.is_cross() or not self.breaks_emas() or (
+                not self.is_engulfing()
+            ):
             return 0
         if self.is_engulfing():
             score += 5
-        if self.is_cross:
+        if self.is_cross():
             score += 2
         if self.is_tight_hull(): 
             score += 1
