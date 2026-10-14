@@ -93,6 +93,17 @@ def make_trade_signal(signal, tp_rrrs, sl_padding) -> dict:
     return trade_signal
 
 
+def breaks_head(candles, signal, buy_head, sell_head):
+    candles_between = get_candles_between(
+        candles, head_candle, signal['trigger_candle']
+    )
+    if signal['direction'] == "buy" and signal['lookback_hl'] <= buy_head['low']:
+        return True
+    if signal['direction'] == "sell" and signal['lookback_hl'] >= sell_head['high']:
+        return True
+    return False 
+
+
 def get_latest_signals(candles, pivot_lookback, fo_lookback=3)->list[dict]:
     buy_shoulder, buy_head = get_hs_buy_level(candles, lookback=pivot_lookback)
     sell_shoulder, sell_head = get_hs_sell_level(candles, lookback=pivot_lookback)
@@ -107,7 +118,11 @@ def get_latest_signals(candles, pivot_lookback, fo_lookback=3)->list[dict]:
         sell_levels=sell_levels, 
         fo_lookback=fo_lookback
     )
+    valid_signals = [
+        signal for signals in signals if not breaks_head(candles, signal, buy_head, sell_head)
+    ]
     return signals
+
 
 def is_on_sr(candles, lookback, signal, fib=0.8):
     range_low = pivots.get_range_low(candles, lookback)['low']
