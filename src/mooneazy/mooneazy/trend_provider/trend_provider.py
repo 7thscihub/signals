@@ -31,8 +31,13 @@ def get_current_candle(symbol, inerval='4h'):
     
 
 def get_sr_pivots(candles, pivot_lookback):
-    support_pivot = pivots.get_lows(candles, pivot_lookback)[-1]
-    resistance_pivot = pivots.get_highs(candles, pivot_lookback)[-1]
+    support_pivot, resistance_pivot = {}, {}
+    support_pivots = pivots.get_lows(candles, pivot_lookback)
+    if support_pivots:
+        support_pivot = support_pivots[-1]
+    resistance_pivots = pivots.get_highs(candles, pivot_lookback)
+    if resistance_pivots:
+        resistance_pivot = resistance_pivots[-1]
     return support_pivot, resistance_pivot
 
 
@@ -41,17 +46,17 @@ def touches(candle, level):
 
 
 def get_trend_from_sr(support_pivot:Candle, resistance_pivot:Candle, current_candle:Candle):
-    sh = support_pivot['close']
-    sl = support_pivot['low']
-    rh = resistance_pivot['high']
-    rl = resistance_pivot['close']
+    sh = support_pivot.get('close')
+    sl = support_pivot.get('low')
+    rh = resistance_pivot.get('high')
+    rl = resistance_pivot.get('close')
     cc = current_candle
 
-    if cc['close'] > sl and (
+    if sl and cc['close'] > sl and (
         touches(cc, sh) or touches(cc, sl) or (sh > cc['close'] > sl)
     ):
         return 'buy'
-    if cc['close'] > rl and (
+    if rl and cc['close'] > rl and (
         touches(cc, rh) or touches(cc, rl) or (rh > cc['close'] > rl)
     ):
         return 'sell'
@@ -89,7 +94,7 @@ class TrendProvider:
     def get_sr_pivots(self):
         if self._sr_pivots:
             return self._sr_pivots
-            
+ 
         support_pivots = []
         resistance_pivots = []
         for candles in self._candles:
@@ -97,9 +102,7 @@ class TrendProvider:
             support_pivots.append(sp)
             resistance_pivots.append(rp)
 
-        sorted_support_pivots = sorted(support_pivots, key=lambda k: k['time'])
-        sorted_resistance_pivots = sorted(resistance_pivots, key=lambda k: k['time'])
-        return sorted_support_pivots[-1], sorted_resistance_pivots[-1]
+        return support_pivots[-1], resistance_pivots[-1]
 
     def get_trend_from_emas(self):
         trends = []

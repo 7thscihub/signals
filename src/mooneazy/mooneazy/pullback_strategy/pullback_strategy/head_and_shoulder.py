@@ -11,7 +11,9 @@ def is_btw(test_candle, left_candle, right_candle):
     return left_time < test_time < right_time
 
 
-def get_candles_between(candles, start_candle, end_candle):
+def get_candles_between(candles, start_candle, end_candle)->list:
+    if not start_candle or not end_candle:
+        return []
     start_time = int(start_candle['time'])
     end_time = int(end_candle['time'])
     return [c for c in candles if start_time < int(c['time']) < end_time]
@@ -93,10 +95,7 @@ def make_trade_signal(signal, tp_rrrs, sl_padding) -> dict:
     return trade_signal
 
 
-def breaks_head(candles, signal, buy_head, sell_head):
-    candles_between = get_candles_between(
-        candles, head_candle, signal['trigger_candle']
-    )
+def breaks_head(candles:list[dict], signal:list[dict], buy_head:dict, sell_head:dict):
     if signal['direction'] == "buy" and signal['lookback_hl'] <= buy_head['low']:
         return True
     if signal['direction'] == "sell" and signal['lookback_hl'] >= sell_head['high']:
@@ -119,7 +118,7 @@ def get_latest_signals(candles, pivot_lookback, fo_lookback=3)->list[dict]:
         fo_lookback=fo_lookback
     )
     valid_signals = [
-        signal for signals in signals if not breaks_head(candles, signal, buy_head, sell_head)
+        signal for signal in signals if not breaks_head(candles, signal, buy_head, sell_head)
     ]
     return signals
 
