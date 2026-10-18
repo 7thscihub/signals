@@ -97,13 +97,16 @@ class BuyTrade(TradeSetup):
         if self.trade_direction != "buy":
             return None
         trade_signal = self._signal | {
-            "trigger_time": self.signal_time,
+            "time": self.signal_time,
             "entry_price": self.entry_price,
             "sl": self.buy_sl(),
             "tp1": self.tp1(),
             "tp2": self.tp2(),
+            "tp1_status": "pending",
+            "tp2_status": "pending",
             "direction": "buy",
-            "interval": self._interval
+            "interval": self._interval,
+            "status": "pending"
         }
         return trade_signal
 
@@ -129,13 +132,16 @@ class SellTrade(TradeSetup):
         if self.trade_direction != "sell":
             return None
         trade_signal = self._signal | {
-            "trigger_time": self.signal_time,
+            "time": self.signal_time,
             "entry_price": self.entry_price,
             "sl": self.sell_sl(),
             "tp1": self.tp1(),
             "tp2": self.tp2(),
+            "tp1_status": "pending",
+            "tp2_status": "pending",
             "direction": "sell",
-            "interval": self._interval
+            "interval": self._interval,
+            "status": "pending"
         }
         return trade_signal
 

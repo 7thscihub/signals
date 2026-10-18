@@ -7,7 +7,8 @@ from ..breakout_strategy.breakout_strategy import breakouts
 from ..ultimate_setups.ultimate_setups import signals as ult_signals
 from ..trend_provider.trend_provider import TrendProvider
 from . import util
-from ..models.scalping_configs import ScalpingAnalysisConfigs, ScalpingStrategiesIntervals 
+from ..models.scalping_configs import ScalpingAnalysisConfigs, ScalpingStrategiesIntervals
+from ..models.signals import SignalData
 
 
 class Analyze:
@@ -91,13 +92,13 @@ def get_candles(symbol, interval, limit):
     return candles_api.get_candles(parameters)
 
 
-@validate_call 
+@validate_call(validate_return=True)
 def get_symbol_signals(
         symbol:str, 
         configs, 
         trend:str='', 
         strategy_intervals=dict[str, list]
-    ):
+    )->list[SignalData]:
     symbol_signals = []
     intervals_list = []
     for intervals in strategy_intervals.values():
@@ -127,7 +128,7 @@ def get_scalping_signals(
         configs: ScalpingAnalysisConfigs = ScalpingAnalysisConfigs(),
         trend_provider:Callable=TrendProvider,
         strategy_intervals: ScalpingStrategiesIntervals = ScalpingStrategiesIntervals()
-    ):
+    )->list[dict]:
     scalping_signals = []
     strategy_intervals_dict = strategy_intervals.model_dump()
     trend_intervals = configs.scalping_trend_intervals
@@ -135,8 +136,9 @@ def get_scalping_signals(
         trend = trend_provider(symbol, configs=configs).get_trend()
         symbol_signals = get_symbol_signals(symbol, configs, trend, strategy_intervals_dict)
         scalping_signals.extend(symbol_signals)
-
-    return scalping_signals
+ 
+    serialized_signals = [signal.model_dump() for signal in scalping_signals]
+    return serialized_signals
 
 
 

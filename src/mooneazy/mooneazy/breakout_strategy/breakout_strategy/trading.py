@@ -103,6 +103,8 @@ class BuyTrade(TradeSetup):
             "sl": self.buy_sl(),
             "tp1": self.tp1(),
             "tp2": self.tp2(),
+            "tp1_status": "pending",
+            "tp2_status": "pending"
             "direction": "buy",
             "interval": self._interval
         }
@@ -135,6 +137,8 @@ class SellTrade(TradeSetup):
             "sl": self.sell_sl(),
             "tp1": self.tp1(),
             "tp2": self.tp2(),
+            "tp1_status": "pending",
+            "tp2_status": "pending"
             "direction": "sell",
             "interval": self._interval
         }

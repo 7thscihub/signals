@@ -1,7 +1,7 @@
 from .breakout import BreakOut, is_bullish
 from .emas import get_breakout_ema_values
 from .hma import BreakoutHMA
-from .trading import get_trade
+from ...trading.setup import get_trade
 
 
 def make_trade_signal(breakout_candle, interval, tp_rrrs, sl_padding, score):

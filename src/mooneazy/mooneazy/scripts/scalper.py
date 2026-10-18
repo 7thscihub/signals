@@ -31,8 +31,8 @@ def get_active_signals(signals:list[dict])->list[dict]:
     for signal in signals:
         if not signal:
             continue
-        signal['utc_time'] = util.unix_to_utc(signal['trigger_time'])
-        if util.is_active_signal(signal["trigger_time"], signal["interval"]):
+        signal['utc_time'] = util.unix_to_utc(signal['time'])
+        if util.is_active_signal(signal["time"], signal["interval"]):
             active_signals.append(signal)
     return active_signals
 
@@ -75,8 +75,8 @@ def scalper_debugger():
     for signal in signals:
         simple_signal = {
             "symbol": signal['symbol'],
-            "trigger_time": util.unix_to_utc(signal['trigger_candle']['time']),
-            "entry_price": signal['trigger_candle']['close'],
+            "utc_time": util.unix_to_utc(signal['time']),
+            "entry_price": signal["entry_price"],
             "signal_type": signal['signal_type'],
             "inerval": signal['interval']
         }

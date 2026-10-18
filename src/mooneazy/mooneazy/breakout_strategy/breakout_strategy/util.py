@@ -1,4 +1,4 @@
-from .trading import get_trade
+from ...trading.setup import get_trade
 
 
 def resolve_level(level):

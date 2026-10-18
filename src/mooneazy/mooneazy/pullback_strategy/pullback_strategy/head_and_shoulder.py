@@ -1,7 +1,7 @@
 from pydantic import validate_call
 from . import pivots
 from . import fakeouts
-from . import trading
+from ...trading import setup as trading
 
 
 def is_btw(test_candle, left_candle, right_candle):
@@ -83,7 +83,7 @@ def get_trade_signals(signals, tp_rrrs:tuple=(2, 5), sl_padding:int=0.001):
 
 def make_trade_signal(signal, tp_rrrs, sl_padding) -> dict:
     signal_type = (
-        'h&s_pullback_' + signal['signal_type']
+        'h&s_' + signal['signal_type']
     )
     signal['signal_type'] = signal_type
     trade_signal = trading.get_trade(
@@ -120,7 +120,7 @@ def get_latest_signals(candles, pivot_lookback, fo_lookback=3)->list[dict]:
     valid_signals = [
         signal for signal in signals if not breaks_head(candles, signal, buy_head, sell_head)
     ]
-    return signals
+    return valid_signals
 
 
 def is_on_sr(candles, lookback, signal, fib=0.8):

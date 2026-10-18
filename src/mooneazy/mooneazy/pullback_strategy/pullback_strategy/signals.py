@@ -2,7 +2,7 @@ from typing import Literal
 from pydantic import BaseModel 
 from .pullback import get_valid_pullback_level
 from .fakeouts import get_all_signals
-from .trading import get_trade
+from ...trading.setup import get_trade
 
 
 class Configs(BaseModel):
@@ -13,7 +13,7 @@ class Configs(BaseModel):
 
 
 def make_trade_signal(signal: dict, tp_rrrs: tuple, sl_padding: float) -> dict:
-    signal_type = 'impulse_pullback_' + signal['signal_type']
+    signal_type = 'pullback_' + signal['signal_type']
     signal['signal_type'] = signal_type
     
     trade_signal = get_trade(
