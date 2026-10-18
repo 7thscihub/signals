@@ -12,7 +12,7 @@ class TriggerCandle(BaseModel):
 
 
 class SignalData(BaseModel):
-    time: int
+    time: int = Field(alias="trigger_time")
     utc_time: str
     entry_price: float
     symbol: str

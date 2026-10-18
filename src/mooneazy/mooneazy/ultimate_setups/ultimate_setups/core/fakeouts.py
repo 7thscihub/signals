@@ -187,7 +187,12 @@ def is_bearish_sfp(candles, lb_high, level, fo_lookback, candle_index):
     candle = candles[candle_index]
     if candle["close"] < candle["open"] <= max_oc <= level_value < max_high:
         return {
-            "trigger_candle": candle, "lookback_hl": max_high, "signal_type": "sfp_sell", "level": level_value
+            "trigger_candle": candle, 
+            "lookback_hl": max_high, 
+            "signal_type": "sfp_sell", 
+            "level": level_value,
+            "direction": "sell",
+            "time": candle["time"]
         }
     return False
 
@@ -200,7 +205,13 @@ def is_bullish_sfp(candles, lb_low, level, fo_lookback, candle_index):
     candle = candles[candle_index]
     if candle["close"] > candle["open"] >= min_oc >= level_value > min_low:
         return {
-            "trigger_candle": candle, "lookback_hl": min_low, "signal_type": "sfp_buy", "level": level_value
+            "trigger_candle": candle, 
+            "lookback_hl": min_low, 
+            "signal_type": "sfp_buy", 
+            "level": level_value,
+            "direction": "buy",
+            "time": candle["time"],
+
         }
     return False
 
@@ -215,7 +226,14 @@ def is_bullish_fa(candles, lb_low, level, fo_lookback, candle_index):
     level_value = util.resolve_level(level)
     candle = candles[candle_index]
     if min_oc < level_value < max_oc and candle["close"] > level_value > candle["low"]:
-        return {"trigger_candle": candle, "lookback_hl": min_low, "signal_type": "fa_buy", "level": level_value}
+        return {
+            "trigger_candle": candle, 
+            "lookback_hl": min_low, 
+            "signal_type": "fa_buy", 
+            "level": level_value,
+            "direction": "buy",
+            "time": candle["time"]
+        }
     return False
 
 
@@ -232,8 +250,10 @@ def is_bearish_fa(candles, lb_high, level, fo_lookback, candle_index):
             "trigger_candle": candle, 
             "lookback_hl": max_high, 
             "signal_type": "fa_sell", 
-            "level": level_value
-            }
+            "level": level_value,
+            "direction": "buy",
+            "time": candle["time"]
+        }
     return False
 
 

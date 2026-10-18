@@ -26,7 +26,7 @@ class SignalData(BaseModel):
     tp2: float
     tp1_status: Literal['pending', 'success', 'failed']
     tp2_status: Literal['pending', 'success', 'failed']
-    status: Literal['pending', 'partial', 'success', 'failed']
+    status: Literal["pending", "closed"]
 
 # for the SignalData.status
 # failed: when no take profit target is hit before stop loss is hit
