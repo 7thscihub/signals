@@ -26,8 +26,6 @@ def send_push_notifications(alerts: list[dict], test_alerts=am.SIGNAL_ALERT):
     if not alerts and os.environ.get("FUNCTION_ENVIRONEMENT", '').lower() != 'dev':
         return
 
-    client = get_client()
-    messaging = messaging(client)
     errors = []
     trade_alerts = alerts or test_alerts
 
@@ -35,7 +33,7 @@ def send_push_notifications(alerts: list[dict], test_alerts=am.SIGNAL_ALERT):
         try:
             send_alert(alert_details=alert)
         except Exception as e:
-            errors.append(traceback.format_exc(e))
+            errors.append(traceback.format_exc())
     return errors or True
 
 
