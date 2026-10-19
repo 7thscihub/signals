@@ -29,7 +29,7 @@ def get_alert_details(signal: dict):
     Maps a raw signal dictionary to Appwrite push notification payload format.
     """
     if not signal:
-        return None
+        raise ValueError("no signal")
 
     title = f"{signal.get('symbol', 'UNKNOWN')} Trade Alert"
     body = f"{signal.get('interval', '')} {signal.get('signal_type', '')}".strip()
