@@ -65,6 +65,7 @@ SIGNAL_ALERT = {
         'signal_type': 'signal_type',
         'path': '/',
         'utc_time': 'utc sample time',
+        'symbol': 'symbol',
         'id': 'uuid23245343'
     }
 }

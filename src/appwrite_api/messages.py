@@ -52,7 +52,7 @@ def send_push_notifications(latest_signals: list[dict]=[], test_alert=am.SIGNAL_
 
     for alert in trade_alerts:
         send_alert(alert_details=alert)
- 
+
 
 
 
