@@ -44,7 +44,7 @@ def get_alert_details(signal: dict):
     return {"title": title, "body": body, "topics": topics, "data": data}
 
 
-def send_push_notifications(latest_signals: list[dict]=None, test_alerts=am.SIGNAL_ALERT):
+def send_push_notifications(latest_signals: list[dict]=[], test_alerts=am.SIGNAL_ALERT):
     """Processes a list of trade signals and dispatches push notifications."""
 
     errors = []
