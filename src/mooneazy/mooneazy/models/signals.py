@@ -19,6 +19,8 @@ class SignalData(BaseModel):
     symbol: str
     interval: str
     time: int
+    utc_time: str,
+    direction: str,
     signal_type: str
     entry_price: float
     sl: float
