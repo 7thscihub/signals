@@ -6,7 +6,7 @@ from .client import get_client
 from . import alert_models as am
 
 
-def send_alert(alert_details: dict = am.SIGNAL_ALERT):
+def send_alert(alert_details:dict):
     """Sends a single push notification via Appwrite."""
     if alert_details:
         raise ValueError("send alert called")
@@ -44,7 +44,6 @@ def get_alert_details(signal: dict):
     return {"title": title, "body": body, "topics": topics, "data": data}
 
 
-@model_validate
 def send_push_notifications(latest_signals: list[dict], test_alerts=am.SIGNAL_ALERT):
     """Processes a list of trade signals and dispatches push notifications."""
 
