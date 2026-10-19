@@ -44,8 +44,8 @@ def get_alert_details(signal: dict):
 def send_push_notifications(trade_signals: list[dict], test_alerts=am.SIGNAL_ALERT):
     """Processes a list of trade signals and dispatches push notifications."""
     # Fixed typo: FUNCTION_ENVIRONMENT
-    if not trade_signals and os.environ.get("FUNCTION_ENVIRONMENT", '').lower() != 'dev':
-        return True
+   # if not trade_signals and os.environ.get("FUNCTION_ENVIRONMENT", '').lower() != 'dev':
+    #     return True
 
     errors = []
     
