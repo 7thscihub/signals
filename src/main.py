@@ -17,9 +17,7 @@ def main(context):
         context.log(errors)
 
     try:
-        # update signals database and return latest_signals
         latest_signals = SignalsTable().add_signals(signals)
-        context.log(latest_signals)
     except Exception as e:
         errors['db errors'] = traceback.format_exc()
         context.log(traceback.format_exc()) 
@@ -32,7 +30,7 @@ def main(context):
 
     try:
         return context.res.json({
-            "signals": latest_signals or signals,
+            "signals": latest_signals,
             "errors": f"{errors}" if errors else None 
         })
     except TypeError as e:
