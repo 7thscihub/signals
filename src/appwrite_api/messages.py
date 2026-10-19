@@ -47,6 +47,7 @@ def get_alert_details(signal: dict):
 def send_push_notifications(latest_signals: list[dict], test_alerts=am.SIGNAL_ALERT):
     """Processes a list of trade signals and dispatches push notifications."""
 
+
     errors = []
     trade_alerts = []
     for signal in latest_signals:
