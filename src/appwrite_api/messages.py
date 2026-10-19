@@ -33,7 +33,9 @@ def get_alert_details(signal: dict):
     data = {
         "path": "/",
         "symbol": str(signal.get('symbol', '')),
-        "utc_time": str(signal.get('utc_time', ''))
+        "utc_time": str(signal.get('utc_time', '')),
+        "signal_type": signal["signal_type"],
+        "id": signal.get('id', "")
     }
  
     return {"title": title, "body": body, "topics": topics, "data": data}
