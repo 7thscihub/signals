@@ -17,7 +17,7 @@ def send_alert(alert_details:dict):
         title=alert.title,
         body=alert.body,
         topics=alert.topics,
-        data=alert.data
+        data=alert.data.model_dumb()
     )
     return response
 
