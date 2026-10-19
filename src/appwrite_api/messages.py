@@ -26,10 +26,13 @@ def get_alert_details(signal: dict):
     """
     Maps a raw signal dictionary to Appwrite push notification payload format.
     """
+    signal_id = signal.get('id'):
+    if signal_id:
+        signal = signal['data'] | { 'id': signal_id }
     title = f"{signal.get('symbol', 'UNKNOWN')} Trade Alert"
     body = f"{signal.get('interval', '')} {signal.get('signal_type', '')}".strip()
     topics = ['mooneazy_signals']
-
+    
     data = {
         "path": "/",
         "symbol": str(signal.get('symbol', '')),
