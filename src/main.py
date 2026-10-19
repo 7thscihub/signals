@@ -6,39 +6,36 @@ from mooneazy.scripts.scalper import get_scalping_signals
 
 
 def main(context):
-    signals = []
+    # signals = []
     errors = {}
     latest_signals = []
-
-    try:
-        signals = get_scalping_signals()
-        send_push_notifications(signals)
-    except Exception as e:
-        errors['scalper_errors'] = traceback.format_exc()
-        context.log(errors)
-
-    try:
-        latest_signals = SignalsTable().add_signals(signals)
-    except Exception as e:
-        errors['db errors'] = traceback.format_exc()
-        context.log(traceback.format_exc()) 
+    send_push_notifications()
 
     # try:
-    #     send_push_notifications(latest_signals)
+        # signals = get_scalping_signals()
+        # send_push_notifications(latest_signals=signals)
     # except Exception as e:
-    #     errors['push_notification_errors'] = e
-    #     context.log(traceback.format_exc())
+        # errors['scalper_errors'] = traceback.format_exc()
+        # context.log(errors)
 
-    try:
-        return context.res.json({
-            "signals": latest_signals,
-            "errors": f"{errors}" if errors else None 
-        })
-    except TypeError as e:
-        context.log(traceback.format_exc())
-        return context.res.json({
-            'errors': "json encoding error"
-        })
+    # try:
+    #     latest_signals = SignalsTable().add_signals(signals)
+    # except Exception as e:
+    #     errors['db errors'] = traceback.format_exc()
+    #     context.log(traceback.format_exc()) 
+    #
+    # try:
+    #     send_push_notifications(latest_signals)
+    # except Exception as e try:
+    #     return context.res.json({
+    #         "signals": latest_signals,
+    #         "errors": f"{errors}" if errors else None 
+    #     })
+    # except TypeError as e:
+    #     context.log(traceback.format_exc())
+    #     return context.res.json({
+    #         'errors': "json encoding error"
+    #     })
 
 
 
