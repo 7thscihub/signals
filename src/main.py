@@ -23,7 +23,7 @@ def main(context):
         errors['db errors'] = traceback.format_exc()
         context.log(traceback.format_exc()) 
 
-     try:
+    # try:
     #     send_push_notifications(latest_signals)
     # except Exception as e:
     #     errors['push_notification_errors'] = e
