@@ -59,6 +59,7 @@ def send_push_notifications(trade_signals: list[dict], test_alerts=am.SIGNAL_ALE
     for alert in trade_alerts:
         try:
             send_alert(alert_details=alert)
+            print('alert sent')
         except Exception:
             errors.append(traceback.format_exc())
             
