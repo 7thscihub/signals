@@ -8,8 +8,6 @@ from . import alert_models as am
 
 def send_alert(alert_details:dict):
     """Sends a single push notification via Appwrite."""
-    if alert_details:
-        raise ValueError("send alert called")
     alert = am.SignalAlert.model_validate(alert_details)
     client = get_client()
     messaging = Messaging(client)
@@ -28,9 +26,6 @@ def get_alert_details(signal: dict):
     """
     Maps a raw signal dictionary to Appwrite push notification payload format.
     """
-    if not signal:
-        raise ValueError("no signal")
-
     title = f"{signal.get('symbol', 'UNKNOWN')} Trade Alert"
     body = f"{signal.get('interval', '')} {signal.get('signal_type', '')}".strip()
     topics = ['mooneazy_signals']
@@ -50,19 +45,14 @@ def send_push_notifications(latest_signals: list[dict]=[], test_alerts=am.SIGNAL
     errors = []
     trade_alerts = []
     for signal in latest_signals:
-        if get_alert_details(signal):
-            trade_alerts.append(signal)
-
+        if trade_alert:= get_alert_details(signal):
+            trade_alerts.append(trade_alert)
     if not trade_alerts:
         trade_alerts.append(test_alerts)
 
     for alert in trade_alerts:
-        try:
-            send_alert(alert_details=alert)
-        except Exception:
-            errors.append(traceback.format_exc())
+        send_alert(alert_details=alert)
  
-    return errors if errors else True
 
 
 
