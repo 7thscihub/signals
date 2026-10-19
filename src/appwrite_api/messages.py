@@ -39,7 +39,7 @@ def get_alert_details(signal: dict):
     return {"title": title, "body": body, "topics": topics, "data": data}
 
 
-def send_push_notifications(latest_signals: list[dict]=[], test_alerts=am.SIGNAL_ALERT):
+def send_push_notifications(latest_signals: list[dict]=[], test_alert=am.SIGNAL_ALERT):
     """Processes a list of trade signals and dispatches push notifications."""
 
     errors = []
@@ -48,7 +48,7 @@ def send_push_notifications(latest_signals: list[dict]=[], test_alerts=am.SIGNAL
         if trade_alert:= get_alert_details(signal):
             trade_alerts.append(trade_alert)
     if not trade_alerts:
-        trade_alerts.append(test_alerts)
+        trade_alerts.append(test_alert)
 
     for alert in trade_alerts:
         send_alert(alert_details=alert)

@@ -30,7 +30,7 @@ class ResultsAlert(BaseModel):
 class SignalAlert(BaseModel):
     title: str
     body: str 
-    topics: list
+    topics: list = ['mooneazy_signals']
     data: AlertData
 
 
@@ -57,19 +57,18 @@ SIGNAL_DATA = {
 }
 
 
-SIGNAL_ALERT = [
-    {
-        'title': 'sample title',
-        'body': 'sample alert body!!',
-        'topics': ['mooneazy_signals'],
-        'data': {
-            'signal_type': 'signal_type',
-            'path': '/',
-            'utc_time': 'utc sample time',
-            'id': 'uuid23245343'
-        }
+SIGNAL_ALERT = {
+    'title': 'sample title',
+    'body': 'sample alert body!!',
+    'topics': ['mooneazy_signals'],
+    'data': {
+        'signal_type': 'signal_type',
+        'path': '/',
+        'utc_time': 'utc sample time',
+        'id': 'uuid23245343'
     }
-]
+}
+
 
 
 RESULTS_ALERT = {
