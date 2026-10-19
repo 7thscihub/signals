@@ -6,11 +6,12 @@ class AlertInfo(BaseModel):
     topics: list[dict]
 
 
-class SignalData(BaseModel):
+class AlertData(BaseModel):
     path: str
     symbol: str
     utc_time: str
     signal_type: str
+    id: str | None = None
 
 
 class ResultsData(BaseModel):
@@ -18,7 +19,7 @@ class ResultsData(BaseModel):
     symbol: str
     utc_time: str
     signal_type: str
-    signal_id: str
+    id: str
 
 
 class ResultsAlert(BaseModel):
@@ -27,8 +28,10 @@ class ResultsAlert(BaseModel):
 
 
 class SignalAlert(BaseModel):
-    info: AlertInfo
-    data: SignalData
+    title: str
+    body: str 
+    topics: list
+    data: AlertData
 
 
 ALERT_INFO = {
@@ -54,10 +57,19 @@ SIGNAL_DATA = {
 }
 
 
-SIGNAL_ALERT = {
-    'info': ALERT_INFO, 
-    'data': SIGNAL_DATA
-}
+SIGNAL_ALERT = [
+    {
+        'title': 'sample title',
+        'body': 'sample alert body!!',
+        'topics': ['mooneazy_signals'],
+        'data': {
+            'signal_type': 'signal_type',
+            'path': '/',
+            'utc_time': 'utc sample time',
+            'id': 'uuid23245343'
+        }
+    }
+]
 
 
 RESULTS_ALERT = {
