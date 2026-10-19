@@ -12,6 +12,7 @@ def main(context):
 
     try:
         signals = get_scalping_signals()
+        send_push_notifications(signals)
     except Exception as e:
         errors['scalper_errors'] = traceback.format_exc()
         context.log(errors)
@@ -22,11 +23,11 @@ def main(context):
         errors['db errors'] = traceback.format_exc()
         context.log(traceback.format_exc()) 
 
-    try:
-        send_push_notifications(latest_signals)
-    except Exception as e:
-        errors['push_notification_errors'] = e
-        context.log(traceback.format_exc())
+     try:
+    #     send_push_notifications(latest_signals)
+    # except Exception as e:
+    #     errors['push_notification_errors'] = e
+    #     context.log(traceback.format_exc())
 
     try:
         return context.res.json({
