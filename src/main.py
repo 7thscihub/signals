@@ -10,6 +10,7 @@ def main(context):
     errors = {}
     latest_signals = []
     send_push_notifications()
+    return context.res.empty()
 
     # try:
         # signals = get_scalping_signals()
