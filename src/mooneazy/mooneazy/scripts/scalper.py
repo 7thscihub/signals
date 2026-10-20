@@ -40,7 +40,7 @@ def get_active_signals(signals:list[dict])->list[dict]:
 def get_scalping_signals():
     signals = get_signals()
     active_signals = get_active_signals(signals)
-    return signals
+    return active_signals
 
 
 def print_active_signals(signals):
