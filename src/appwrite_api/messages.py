@@ -46,13 +46,13 @@ def get_alert_details(signal: dict):
 
 def send_push_notifications(latest_signals: list[dict]=[], test_alert=am.SIGNAL_ALERT):
     """Processes a list of trade signals and dispatches push notifications."""
-
+    function_environment = os.environ.get('FUNCTION_ENVIRONMENT')
     errors = []
     trade_alerts = []
     for signal in latest_signals:
         if trade_alert:= get_alert_details(signal):
             trade_alerts.append(trade_alert)
-    if not trade_alerts:
+    if len(trade_alerts) < 1 and function_environment == "dev" :
         trade_alerts.append(test_alert)
 
     for alert in trade_alerts:
