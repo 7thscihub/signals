@@ -59,12 +59,13 @@ class HeadsAndShouldersConfigs(BaseModel):
 
 class ScalpingAnalysisConfigs(BaseModel):
     model_config = ConfigDict(from_attributes=True)
-        
+ 
     sr_pivot_lookback: int = 30
     supported_symbols:list = ['ETHUSDT', 'BTCUSDT', 'XAUUSDT']
     default_limit:int = 500
     ema_cross_periods:tuple = (8, 20)
     default_interval: str = '30m'
+    default_fo_lookback: int = 5
 
     strategy_intervals: dict = {
         'breakout': ['15m', '30m',],

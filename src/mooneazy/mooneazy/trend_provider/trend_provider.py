@@ -28,7 +28,7 @@ def get_trend_from_htf_emas(symbol, intervals: list = ['4h', '1d', '1w'], ema_pe
 
 def get_current_candle(symbol, inerval='4h'):
     return get_candles(symbol=symbol, interval='1m', limit=2)[-1]
-    
+
 
 def get_sr_pivots(candles, pivot_lookback):
     support_pivot, resistance_pivot = {}, {}
@@ -45,19 +45,29 @@ def touches(candle, level):
     return float(candle['high']) > float(level) > float(candle['low'])
 
 
-def get_trend_from_sr(support_pivot:Candle, resistance_pivot:Candle, current_candle:Candle):
-    sh = support_pivot.get('close')
+def get_support_high(pivot_candle):
+    return min(pivot_candle['close'], pivot_candle['open'])
+
+
+def get_resistance_low(pivot_candle):
+    return max(pivot_candle['close'], pivot_candle['open'])
+
+
+def get_trend_from_sr(support_pivot:Candle, resistance_pivot:Candle, current_candles:list[Candle]):
+    sh = get_support_high(support_pivot)
     sl = support_pivot.get('low')
     rh = resistance_pivot.get('high')
-    rl = resistance_pivot.get('close')
-    cc = current_candle
+    rl = get_resistance_low(resistance_pivot)
+    currenct_candle = current_candles[-1]
+    highest_candle = max(current_candles, key=lambda candle:candle['high'])
+    lowest_candle = min(current_candles, key=lambda candle:candle['low'])
 
-    if sl and cc['close'] > sl and (
-        touches(cc, sh) or touches(cc, sl) or (sh > cc['close'] > sl)
+    if sl and currenct_candle['close'] > sl and (
+        touches(lowest_candle, sh) or touches(lowest_candle, sl) or (sh > currenct_candle['close'] > sl)
     ):
         return 'buy'
-    if rl and cc['close'] > rl and (
-        touches(cc, rh) or touches(cc, rl) or (rh > cc['close'] > rl)
+    if rl and currenct_candle['close'] > rl and (
+        touches(highest_candle, rh) or touches(highest_candle, rl) or (rh > currenct_candle['close'] > rl)
     ):
         return 'sell'
     return None 
@@ -79,11 +89,12 @@ class TrendProvider:
         self._candles = self.fetch_candles()
 
     def get_current_candle(self):
-        return get_candles(
+        currenct_candles = get_candles(
             symbol=self._symbol, 
             interval=self._configs.default_interval, 
-            limit=2
-        )[-1]
+            limit=self._configs.default_fo_lookback 
+        )
+        return currenct_candles
 
     def fetch_candles(self):
         candles: list[list[dict]] = []
@@ -122,5 +133,16 @@ class TrendProvider:
 
     def get_trend(self):
         return self.get_trend_from_sr() or self.get_trend_from_emas()
+
+
+def get_trend(symbol, configs):
+    trend = TrendProvider(symbol=symbol, configs=configs).get_trend_from_sr()
+    return trend
+
+if __name__ == "__main__":
+    symbol = "BTCUSDT"
+    configs = ScalpingAnalysisConfigs()
+    print(get_trend(symbol, configs))
+
 
 
