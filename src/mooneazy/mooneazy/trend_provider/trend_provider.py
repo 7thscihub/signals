@@ -136,7 +136,7 @@ class TrendProvider:
 
 
 def get_trend(symbol, configs):
-    trend = TrendProvider(symbol=symbol, configs=configs).get_trend_from_sr()
+    trend = TrendProvider(symbol=symbol, configs=configs).get_trend()
     return trend
 
 if __name__ == "__main__":
