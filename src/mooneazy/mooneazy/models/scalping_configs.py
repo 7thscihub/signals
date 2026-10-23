@@ -21,7 +21,7 @@ class UltimateSetupsConfigs(BaseModel):
     ult_setups_intervals: list = ['30m', '4h']
     levels_interval: str = '4h'
     levels_pivot_lookback: int = 5
-    levels_limit: int = 20
+    levels_limit: int = 200
 
 
 class BreakoutConfigs(BaseModel):
@@ -82,7 +82,7 @@ class ScalpingAnalysisConfigs(BaseModel):
         'heads_and_shoulders': ['30m']
     }
 
-    scalping_trend_intervals: list = ['4h']
+    scalping_trend_intervals: list = ['1d']
     heads_and_shoulders_configs: HeadsAndShouldersConfigs = HeadsAndShouldersConfigs()
     pullback_configs: PullbackConfigs = PullbackConfigs()
     breakout_configs: BreakoutConfigs = BreakoutConfigs()

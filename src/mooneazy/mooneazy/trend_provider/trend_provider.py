@@ -110,9 +110,11 @@ class TrendProvider:
         self._configs = configs
         self._intervals = self._configs.scalping_trend_intervals
         self._sr_pivots = sr_pivots
+        self._levels_interval = self._configs.levels_interval
         self._ema_periods = self._configs.ema_cross_periods
         self._pivot_lookback = self._configs.sr_pivot_lookback 
         self._candles = self.fetch_candles()
+        self._levels_candles = self.fetch_level_candles()
 
     def get_current_candle(self):
         currenct_candles = get_candles(
@@ -127,19 +129,15 @@ class TrendProvider:
         for interval in self._intervals:
             candles.append(get_candles(self._symbol, interval))
         return candles
+ 
+    def fetch_level_candles(self):
+        return get_candles(self._symbol, self._levels_interval)
 
     def get_sr_pivots(self):
         if self._sr_pivots:
             return self._sr_pivots
- 
-        support_pivots = []
-        resistance_pivots = []
-        for candles in self._candles:
-            sp, rp = get_sr_pivots(candles, self._pivot_lookback)
-            support_pivots.append(sp)
-            resistance_pivots.append(rp)
-
-        return support_pivots[-1], resistance_pivots[-1]
+        candles = self._levels_candles
+        return get_sr_pivots(candles, self._pivot_lookback)
 
     def get_levels(self):
         support_pivot, resistance_pivot = self.get_sr_pivots()
