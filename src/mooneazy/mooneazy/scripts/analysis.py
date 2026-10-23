@@ -5,7 +5,7 @@ from ..pullback_strategy.pullback_strategy.signals import Pullback
 from ..pullback_strategy.pullback_strategy.head_and_shoulder import HeadAndShoulder
 from ..breakout_strategy.breakout_strategy import breakouts
 from ..ultimate_setups.ultimate_setups import signals as ult_signals
-from ..trend_provider.trend_provider import TrendProvider
+from ..trend_provider.trend_provider import TrendProvider, get_levels
 from . import util
 from ..models.scalping_configs import ScalpingAnalysisConfigs, ScalpingStrategiesIntervals
 from ..models.signals import SignalData
@@ -13,14 +13,20 @@ from ..models.signals import SignalData
 
 class Analyze:
     def __init__(self, 
-                 symbol, interval, candles, trend, configs:ScalpingAnalysisConfigs=ScalpingAnalysisConfigs()
+            symbol, 
+            interval, 
+            candles, 
+            trend, 
+            configs:ScalpingAnalysisConfigs=ScalpingAnalysisConfigs(),
+            levels:dict[str, list] = {}
         ):
         self._symbol = symbol
         self._interval = interval 
         self._configs = configs
         self._candles = candles
         self._trend =  trend
-    
+        self._levels = levels
+
     def get_pullback_signal(self)->dict[str, any] | None:
         signals = Pullback(
             candles = self._candles,
@@ -32,6 +38,10 @@ class Analyze:
     
     def get_breakout_signals(self):
         signals = []
+        configs = self._configs.breakout_configs
+        intervals = configs.breakout_intervals
+        if not self._interval in intervals:
+            return signals
         signal = breakouts.Breakouts(
             candles=self._candles, 
             interval=self._interval, 
@@ -44,8 +54,16 @@ class Analyze:
 
     def get_ult_signal(self):
         signals = []
+        levels = self._levels
+        configs = self._configs.ultimate_setups_configs
+        intervals = configs.ult_setups_intervals
+        if not self._interval in intervals:
+            return signals
+        if self._interval != configs.levels_interval:
+            levels = {}
         signal = ult_signals.get_ult_signal(
             candles=self._candles,
+            levels=levels,
             configs=self._configs.ultimate_setups_configs, 
             interval=self._interval
         )
@@ -55,10 +73,14 @@ class Analyze:
 
     def get_hs_signal(self):
         signals = []
+        configs = self._configs.heads_and_shoulders_configs
+        if not self._interval in configs.heads_and_shoulders_intervals:
+            return signals
+
         trade_signals = HeadAndShoulder(
             candles=self._candles, 
             interval=self._interval,
-            configs=self._configs.heads_and_shoulders_configs
+            configs=configs
         ).latest_trade_signals()
         if trade_signals:
             signals.extend(trade_signals)
@@ -97,7 +119,8 @@ def get_symbol_signals(
         symbol:str, 
         configs, 
         trend:str='', 
-        strategy_intervals=dict[str, list]
+        strategy_intervals=dict[str, list],
+        levels:dict[str,list]= {}
     )->list[SignalData]:
     symbol_signals = []
     intervals_list = []
@@ -134,7 +157,10 @@ def get_scalping_signals(
     trend_intervals = configs.scalping_trend_intervals
     for symbol in symbols:
         trend = trend_provider(symbol, configs=configs).get_trend()
-        symbol_signals = get_symbol_signals(symbol, configs, trend, strategy_intervals_dict)
+        levels = get_levels(symbol, configs=configs)
+        symbol_signals = get_symbol_signals(
+            symbol, configs, trend, strategy_intervals_dict, levels
+        )
         scalping_signals.extend(symbol_signals)
  
     serialized_signals = [signal.model_dump() for signal in scalping_signals]

@@ -3,9 +3,11 @@ from .core.indicators import EmaCross
 from ...trading.setup import get_trade
 
 
-def get_ult_signal(candles, configs, interval, trend:str = ''):
+def get_ult_signal(candles, configs, interval, trend:str = '', levels:dict={}):
     ult_setups = UltimateSetups(
         candles=candles,
+        buy_levels = levels.get('buy_levels'),
+        sell_levels = levels.get('sell_levels'),
         fo_lookback=configs.fo_lookback,
         pivot_lookback=configs.pivot_lookback
     )

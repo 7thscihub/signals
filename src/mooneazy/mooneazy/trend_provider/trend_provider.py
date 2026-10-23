@@ -41,16 +41,42 @@ def get_sr_pivots(candles, pivot_lookback):
     return support_pivot, resistance_pivot
 
 
+def get_levels(symbol, configs):
+    candles = get_candles(symbol, configs.levels_interval, configs.levels_limit)
+    pivot_lookback = configs.levels_pivot_lookback
+    support_pivot, resistance_pivot = get_sr_pivots(candles, pivot_lookback)
+
+    levels = {'buy_levels': [], 'sell_levels': [] }
+
+    if support_pivot:
+        buy_level = {
+            'time': support_pivot.get('time'), 
+            'value': support_pivot.get('low')
+        }
+        levels['buy_levels'].append(buy_level)
+
+    if resistance_pivot:
+        sell_level = {
+            'time': resistance_pivot.get('time'),
+            'value': resistance_pivot.get('high')
+        }
+        levels['sell_levels'].append(sell_level)
+
+    return levels 
+
+
 def touches(candle, level):
     return float(candle['high']) > float(level) > float(candle['low'])
 
 
 def get_support_high(pivot_candle):
-    return min(pivot_candle['close'], pivot_candle['open'])
+    if not pivot_candle:
+        return None 
+    return min(pivot_candle.get('close'), pivot_candle.get('open'))
 
 
 def get_resistance_low(pivot_candle):
-    return max(pivot_candle['close'], pivot_candle['open'])
+    return max(pivot_candle.get('close'), pivot_candle.get('open'))
 
 
 def get_trend_from_sr(support_pivot:Candle, resistance_pivot:Candle, current_candles:list[Candle]):
@@ -115,6 +141,19 @@ class TrendProvider:
 
         return support_pivots[-1], resistance_pivots[-1]
 
+    def get_levels(self):
+        support_pivot, resistance_pivot = self.get_sr_pivots()
+        buy_level = { 
+            'time': support_pivot['time'], 'value': support_pivot['low'] 
+        }
+        sell_level = { 
+            'time': resistance_pivot['time'], 'value': resistance_pivot['high'] 
+        }
+        return {
+            "buy_levels": [buy_level],
+            "sell_levels": [sell_level]
+        }
+
     def get_trend_from_emas(self):
         trends = []
         for candles in self._candles:
@@ -133,6 +172,7 @@ class TrendProvider:
 
     def get_trend(self):
         return self.get_trend_from_sr() or self.get_trend_from_emas()
+    
 
 
 def get_trend(symbol, configs):
