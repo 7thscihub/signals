@@ -61,12 +61,10 @@ def get_lower_lows(candles, lookback):
     range_high = get_range_high(candles, lookback)
     last_range = candles[candles.index(range_high):]
     range_low = get_range_low(last_range, lookback)
+    if range_low is None:
+            return None
 
     ll_range = last_range[:last_range.index(range_low) + lookback + 1]
-
-    if range_low is None:
-        return None
-
     sorted_by_lows = sorted(ll_range, key=lambda k: k["low"])
 
     pivots = [c for c in sorted_by_lows if is_support_pivot(ll_range, c, lookback)]
@@ -83,14 +81,11 @@ def get_higher_highs(candles, lookback):
     range_low = get_range_low(candles, lookback)
     last_range = candles[candles.index(range_low):]
     range_high = get_range_high(last_range, lookback)
+    if range_high is None:
+            return None
 
     hh_range = last_range[:last_range.index(range_high) + lookback + 1]
-
-    if range_high is None:
-        return None
-
     sorted_by_highs = sorted(hh_range, key=lambda k: k["high"], reverse=True)
-
     pivots = [c for c in sorted_by_highs if is_resistance_pivot(hh_range, c, lookback)]
 
     for pivot in pivots:
