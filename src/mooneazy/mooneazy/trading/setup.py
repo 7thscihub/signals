@@ -98,7 +98,7 @@ class BuyTrade(TradeSetup):
             return None
         trade_signal = self._signal | {
             "time": self.signal_time,
-            "entry_price": (self.entry_price, 2),
+            "entry_price": round(self.entry_price, 2),
             "sl": round(self.buy_sl(), 2),
             "tp1": round(self.tp1(), 2),
             "tp2": round(self.tp2(), 2),
