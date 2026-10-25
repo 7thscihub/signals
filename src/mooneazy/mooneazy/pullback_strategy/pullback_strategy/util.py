@@ -6,7 +6,7 @@ from ...ultimate_setups.ultimate_setups.core import settings
 
 
 def is_significant_pullback(
-    impulse, pullback, min_fib_retracement, max_fib_retracement
+        impulse, pullback, min_fib_retracement, max_fib_retracement
     ):
     # print(f'util called: impulse: {impulse}, trend impulse{pullback}')
     # make sure pullback and impulse are in opposite directions
@@ -348,7 +348,14 @@ def is_bullish_rsi_div(
         candle2_close = min(c['close'] for c in fo_candles)
 
         return rsi1_value < rsi2_value and candle1_close > candle2_close
-    
+
+
+def unix_to_utc(unix_timestamp):
+    unix_timestamp = int(unix_timestamp)
+    return datetime.fromtimestamp(
+        unix_timestamp / 1000, tz=timezone.utc
+    ).strftime('%Y-%m-%d %H:%M:%S')
+
 
     
         

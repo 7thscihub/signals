@@ -1,3 +1,4 @@
+import json 
 from collections import OrderedDict
 from typing import Literal
 from . import util
@@ -7,9 +8,13 @@ from . import errors
 
 
 def get_pivots(trade_candles, lookback_left=config.LOOKBACK_LEFT, lookback_right=config.LOOKBACK_RIGHT):
-    highs = pivots.get_highs(trade_candles, lookback_left, lookback_right)
-    lows = pivots.get_lows(trade_candles, lookback_left, lookback_right)
-    return util.combine_pivots(resistance_pivots=highs, support_pivots=lows)
+    highs = pivots.get_resistance_pivots(trade_candles, lookback_left, lookback_right)
+    lows = pivots.get_support_pivots(trade_candles, lookback_left, lookback_right)
+    combine_pivots = util.combine_pivots(resistance_pivots=highs, support_pivots=lows)
+    for pivot in combine_pivots:
+        pivot['utc_time'] = util.unix_to_utc(pivot['time'])
+
+    return combine_pivots
 
 
 def get_impulse(pivot, prev_pivot):
@@ -55,10 +60,12 @@ def get_swings(pivots_list) -> dict:
             impulse = get_impulse(pivot, pivots_list[i - 1])
         impulse_list.append({
             'impulse': impulse,
-            'pivot': pivot
+            'pivot': pivot,
+            
         })
 
     max_swing = max(impulse_list, key=lambda x: abs(x['impulse']))
+    # print(f'max swing: {max_swing}')
     other_swings = [e for e in impulse_list if (
         e != max_swing and e['pivot']['time'] > max_swing['pivot']['time']
     )]
@@ -82,12 +89,12 @@ def get_pullback_details(pivots_list, min_fib=0.382, max_fib=0.7):
     max_impulse = max_swing['impulse']
     direction = 'buy' if max_impulse > 0 else 'sell'
     max_pullback = get_max_pullback(other_swings, direction)
-
+    
     if not max_pullback:
         return None 
     if not util.is_significant_pullback(
         impulse=max_impulse,
-        pullback=max_pullback['pivot']['value'],
+        pullback=max_pullback['impulse'],
         min_fib_retracement=min_fib,
         max_fib_retracement=max_fib
     ):
@@ -114,8 +121,7 @@ def get_valid_pullback_level(
         return None
  
     pivots_list = get_pivots(candles, lookback_left, lookback_right)
-    pullback = get_pullback_details(pivots_list, min_fib=min_fib, max_fib=max_fib)
- 
+    pullback = get_pullback_details(pivots_list, min_fib=min_fib, max_fib=max_fib) 
     if pullback and pullback['direction'] == trend and is_valid_pullback_level(
         candles, pullback, min_follow_up_retracement_fib=min_follow_up_retracement_fib
     ):
