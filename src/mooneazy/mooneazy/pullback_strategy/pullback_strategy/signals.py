@@ -80,8 +80,8 @@ class Pullback:
         self._trend = trend
         self._configs = configs
         self._range_lookback = self._configs.range_lookback
-        self._min_fib = self._configs._min_fib
-        self._max_fib = self._configs._max_fib
+        self._min_fib = self._configs.min_fib
+        self._max_fib = self._configs.max_fib
         self._min_follow_up_retracement_fib = self._configs.min_follow_up_retracement_fib
 
     def get_trade_signals(self):
