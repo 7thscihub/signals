@@ -17,7 +17,7 @@ pullback_level = get_valid_pullback_level(
     lookback_right = 10,
     trend = 'buy',
     min_fib = 0.236,
-    max_fib = 0.5,
+    max_fib = 0.65,
     min_follow_up_retracement_fib = 0.7
 )
 

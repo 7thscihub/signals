@@ -33,7 +33,10 @@ def get_trade_signal(
         candles=candles, 
         lookback_left=lookback_left, 
         lookback_right=lookback_right,
-        trend=trend
+        trend=trend,
+        min_fib=configs.min_fib,
+        max_fib=configs.max_fib,
+        min_follow_up_retracement_fib=configs.min_follow_up_retracement_fib
     )
 
     if not pullback_level:
@@ -71,13 +74,16 @@ def get_trade_signal(
 
 
 class Pullback:
-    def __init__(self, candles, interval: str, trend: str, configs = Configs()):
+    def __init__(self, candles, interval: str, trend: str, configs):
         self._candles = candles
         self._interval = interval
         self._trend = trend
         self._configs = configs
         self._range_lookback = self._configs.range_lookback
-    
+        self._min_fib = self._configs._min_fib
+        self._max_fib = self._configs._max_fib
+        self._min_follow_up_retracement_fib = self._configs.min_follow_up_retracement_fib
+
     def get_trade_signals(self):
         signals = []
         candles = self._candles
@@ -89,7 +95,8 @@ class Pullback:
                 candles=candles[:candle_index + 1],
                 interval=self._interval,
                 trend=self._trend,
-                configs=self._configs
+                configs=self._configs,
+
             )
             if candle_signal:
                 signals.append(candle_signal)
