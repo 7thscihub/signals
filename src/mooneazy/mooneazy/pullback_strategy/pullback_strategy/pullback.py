@@ -31,7 +31,9 @@ def is_valid_pullback_level(
     impulse = pullback_pivot['value'] - impulse_pivot['value']
     is_bullish_pullback = pullback_details['direction'] == 'buy'
     
-    min_retracement_price = pullback_pivot['value'] - (impulse * min_follow_up_retracement_fib)
+    min_retracement_price = pullback_pivot['value'] - (
+        impulse * min_follow_up_retracement_fib
+    )
     
     pullback_range = [c for c in candles if c['time'] > pullback_pivot['time']]
     if not pullback_range:
@@ -45,7 +47,7 @@ def is_valid_pullback_level(
         return hh_ll_price > min_retracement_price
 
 
-def get_impulse_list(pivots_list) -> list[dict]:
+def get_swings(pivots_list) -> dict:
     impulse_list = []
     for i, pivot in enumerate(pivots_list):
         impulse = 0.0
@@ -55,39 +57,48 @@ def get_impulse_list(pivots_list) -> list[dict]:
             'impulse': impulse,
             'pivot': pivot
         })
-    return impulse_list
+
+    max_swing = max(impulse_list, key=lambda x: abs(x['impulse']))
+    other_swings = [e for e in impulse_list if (
+        e != max_swing and e['pivot']['time'] > max_swing['pivot']['time']
+    )]
+    return { 'max_swing': max_swing, 'other_swings': other_swings }
+
+
+def get_max_pullback(other_swings, direction):
+    if direction == 'buy':
+        return min(other_swings, key=lambda x: x['pivot']['value'], default={})
+    if direction == 'sell':
+        return max(other_swings, key=lambda x: x['pivot']['value'], default={})
 
 
 def get_pullback_details(pivots_list, min_fib=0.382, max_fib=0.7):
-    impulse_elements = get_impulse_list(pivots_list)
-    if not impulse_elements:
+    swings = get_swings(pivots_list)
+    if not swings:
         return None
  
-    max_element = max(impulse_elements, key=lambda x: abs(x['impulse']))
-    max_impulse = max_element['impulse']
-    pullback_pivot = None
+    max_swing = swings['max_swing']
+    other_swings = swings['other_swings']
+    max_impulse = max_swing['impulse']
     direction = 'buy' if max_impulse > 0 else 'sell'
- 
-    prev_element = None
-    for current_element in impulse_elements:
-        if prev_element == max_element and util.is_significant_pullback(
-            impulse=max_impulse,
-            pullback=current_element['impulse'],
-            min_fib_retracement=min_fib,
-            max_fib_retracement=max_fib
-        ):
-            pullback_pivot = current_element['pivot']
-            break
-        prev_element = current_element
+    max_pullback = get_max_pullback(other_swings, direction)
 
-    if not pullback_pivot:
+    if not max_pullback:
+        return None 
+    if not util.is_significant_pullback(
+        impulse=max_impulse,
+        pullback=max_pullback['pivot']['value'],
+        min_fib_retracement=min_fib,
+        max_fib_retracement=max_fib
+    ):
         return None
 
-    return {
-        'impulse_pivot': max_element['pivot'],
-        'pullback_pivot': pullback_pivot,
+    pullback_details =  {
+        'impulse_pivot': max_swing['pivot'],
+        'pullback_pivot': max_pullback['pivot'],
         'direction': direction
     }
+    return pullback_details
 
 
 def get_valid_pullback_level(
@@ -105,9 +116,10 @@ def get_valid_pullback_level(
     pivots_list = get_pivots(candles, lookback_left, lookback_right)
     pullback = get_pullback_details(pivots_list, min_fib=min_fib, max_fib=max_fib)
  
-    if pullback and pullback['direction'] == trend:
-        if is_valid_pullback_level(candles, pullback, min_follow_up_retracement_fib=min_follow_up_retracement_fib):
-            return pullback
+    if pullback and pullback['direction'] == trend and is_valid_pullback_level(
+        candles, pullback, min_follow_up_retracement_fib=min_follow_up_retracement_fib
+    ):
+        return pullback
  
     return None
 
