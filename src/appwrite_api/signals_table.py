@@ -70,7 +70,7 @@ class SignalsTable:
     
     def update_signals(self, signals:list[dict]):
         for signal in signals:
-            self.update_signal(signal_dict=signal)
+            self.update_signal(signal=signal)
 
     def get_closed_signals(self, limit=10) ->list[dict]:
         response = self.tablesDB.list_rows(
