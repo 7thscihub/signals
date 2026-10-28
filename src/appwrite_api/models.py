@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, AliasChoice
 from typing import Literal
 
 class TriggerCandle(BaseModel):
