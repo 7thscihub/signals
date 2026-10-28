@@ -1,5 +1,5 @@
 from typing import Literal
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, AliasChoices
 
 class Candle(BaseModel):
     time: int
@@ -26,9 +26,9 @@ class SignalData(BaseModel):
     sl: float
     tp1: float
     tp2: float
-    tp1_status: Literal['pending', 'success', 'failed']
-    tp2_status: Literal['pending', 'success', 'failed']
-    status: Literal["pending", "closed"]
+    tp1_status: Literal['pending', 'success', 'failed'] = 'pending'
+    tp2_status: Literal['pending', 'success', 'failed'] = 'pending'
+    status: Literal["pending", "closed"] = 'pending'
 
 # for the SignalData.status
 # failed: when no take profit target is hit before stop loss is hit
@@ -42,7 +42,7 @@ class SignalData(BaseModel):
 
 
 class SignalModel(BaseModel):
-    id: str = Field(alias='$id')
+    id: str = Field(validation_alias=AliasChoices('$id', 'id'))
     data: SignalData
    
 

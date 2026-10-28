@@ -1,5 +1,5 @@
 from typing import Literal
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, AliasChoices
 
 class Candle(BaseModel):
     time: int
@@ -40,6 +40,6 @@ class SignalData(BaseModel):
 
 
 class SignalModel(BaseModel):
-    id: str = Field(alias='$id')
+    id: str = Field(validation_alias=AliasChoices('$id', 'id'))
     data: SignalData
 

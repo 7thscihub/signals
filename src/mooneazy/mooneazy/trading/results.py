@@ -4,7 +4,7 @@ from typing import Literal
 from pydantic import BaseModel, validate_call
 from ..candles_api.candles_api import api
 from . import tps
-from . import models
+from ..models.signals import SignalModel
 
 
 @validate_call()
@@ -24,7 +24,7 @@ def get_signal_candles(
 
 
 @validate_call()
-def get_signal_results(signal:models.SignalModel) -> dict | None:
+def get_signal_results(signal:SignalModel) -> dict | None:
     signal_dict = signal.model_dump()
     signal_data = signal_dict['data']
     candles = get_signal_candles(

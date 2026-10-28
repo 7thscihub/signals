@@ -12,19 +12,19 @@ class TriggerCandle(BaseModel):
 
 
 class SignalData(BaseModel):
+    symbol: str
+    interval: str
     time: int
     utc_time: str
+    direction: str
+    signal_type: str
     entry_price: float
-    symbol: str
     sl: float
     tp1: float
     tp2: float
-    direction: Literal['buy', 'sell']
-    interval: str 
-    signal_type: str
-    tp1_status: Literal['success', 'pending', 'failed'] = 'pending'
-    tp2_status: Literal['success', 'pending', 'failed'] = 'pending'
-    status: Literal['pending', 'closed'] = 'pending'
+    tp1_status: Literal['pending', 'success', 'failed'] = 'pending'
+    tp2_status: Literal['pending', 'success', 'failed'] = 'pending'
+    status: Literal["pending", "closed"] = 'pending'
 
 
 class SignalModel(BaseModel):
