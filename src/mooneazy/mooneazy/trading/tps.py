@@ -135,15 +135,10 @@ def is_stopped_out(
 
 def get_signal_status(tps):
     statuses = [tp['status'] for tp in tps.values()]
-    len_statuses = len(statuses)
-    successful = statuses.count('success')
-    failed = statuses.count('failed')
+    pending = statuses.count('pending')
 
-    if not statuses or (
-        0 < successful < len_statuses or 0 < failed < len_statuses
-    ):
+    if pending > 0:
         return 'pending'
-
     return 'closed'
 
 
