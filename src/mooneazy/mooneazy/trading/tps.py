@@ -135,23 +135,16 @@ def is_stopped_out(
 
 def get_signal_status(tps):
     statuses = [tp['status'] for tp in tps.values()]
-
-    if not statuses:
-        return 'pending'
-
+    len_statuses = len(statuses)
     successful = statuses.count('success')
     failed = statuses.count('failed')
 
-    if successful == len(statuses):
-        return 'success'
+    if not statuses or (
+        0 < successful < len_statuses or 0 < failed < len_statuses
+    ):
+        return 'pending'
 
-    if successful > 0:
-        return 'partial'
-
-    if failed > 0:
-        return 'failed'
-
-    return 'pending'
+    return 'closed'
 
 
 def get_results(candles, signal_data):
