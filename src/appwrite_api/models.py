@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, AliasChoice
+from pydantic import BaseModel, Field, AliasChoices
 from typing import Literal
 
 class TriggerCandle(BaseModel):
@@ -28,7 +28,7 @@ class SignalData(BaseModel):
 
 
 class SignalModel(BaseModel):
-    id: str = Field(validation_alias=AliasChoice('$id', 'id'))
+    id: str = Field(validation_alias=AliasChoices('$id', 'id'))
     data: SignalData
 
 
