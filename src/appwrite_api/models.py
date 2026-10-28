@@ -28,7 +28,7 @@ class SignalData(BaseModel):
 
 
 class SignalModel(BaseModel):
-    id: str = Field(alias='$id')
+    id: str = Field(validation_alias=AliasChoice('$id', 'id')
     data: SignalData
 
 
