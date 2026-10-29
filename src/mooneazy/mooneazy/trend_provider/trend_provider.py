@@ -10,7 +10,9 @@ def get_candles(symbol, interval, limit=200):
         'interval': interval,
         'limit': limit 
     }
-    return api.get_candles(parameters)
+    candles = api.get_candles(parameters)
+    # print(f"len candles: {len(candles)}")
+    return candles
 
 
 def get_trend_from_htf_emas(symbol, intervals: list = ['4h', '1d', '1w'], ema_periods=(8, 20)) -> str | None:
@@ -76,7 +78,16 @@ def get_support_high(pivot_candle):
 
 
 def get_resistance_low(pivot_candle):
+    if not pivot_candle:
+        return None
     return max(pivot_candle.get('close'), pivot_candle.get('open'))
+
+def is_on_sr(candle, sr_high, sr_low, direction):
+    if candle['close'] > sr_high and direction == 'sell':
+        return False 
+    if candle['close'] < sr_low and direction == 'buy':
+        return False
+    return True 
 
 
 def get_trend_from_sr(support_pivot:Candle, resistance_pivot:Candle, current_candles:list[Candle]):
@@ -116,22 +127,25 @@ class TrendProvider:
         self._candles = self.fetch_candles()
         self._levels_candles = self.fetch_level_candles()
 
-    def get_current_candle(self):
-        currenct_candles = get_candles(
+    def get_current_candles(self):
+        candles = get_candles(
             symbol=self._symbol, 
             interval=self._configs.default_interval, 
-            limit=self._configs.default_fo_lookback 
+            limit=50 
         )
-        return currenct_candles
+        current_candles = candles[-20:-16]
+        return current_candles
 
     def fetch_candles(self):
         candles: list[list[dict]] = []
         for interval in self._intervals:
-            candles.append(get_candles(self._symbol, interval))
+            interval_candles = get_candles(self._symbol, interval)
+            candles.append(interval_candles)
+    
         return candles
  
     def fetch_level_candles(self):
-        return get_candles(self._symbol, self._levels_interval)
+        return get_candles(self._symbol, self._levels_interval)[:-2]
 
     def get_sr_pivots(self):
         if self._sr_pivots:
@@ -165,8 +179,8 @@ class TrendProvider:
 
     def get_trend_from_sr(self):
         support_pivot, resistance_pivot = self.get_sr_pivots()
-        current_candle = self.get_current_candle()
-        return get_trend_from_sr(support_pivot, resistance_pivot, current_candle)
+        current_candles = self.get_current_candles()
+        return get_trend_from_sr(support_pivot, resistance_pivot, current_candles)
 
     def get_trend(self):
         return self.get_trend_from_sr() or self.get_trend_from_emas()
@@ -178,7 +192,7 @@ def get_trend(symbol, configs):
     return trend
 
 if __name__ == "__main__":
-    symbol = "BTCUSDT"
+    symbol = "ETHUSDT"
     configs = ScalpingAnalysisConfigs()
     print(get_trend(symbol, configs))
 

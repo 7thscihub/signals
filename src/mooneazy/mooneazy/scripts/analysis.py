@@ -28,12 +28,18 @@ class Analyze:
         self._levels = levels
 
     def get_pullback_signal(self)->dict[str, any] | None:
+        configs = self._configs.pullback_configs
+        candles = self._candles[-configs.range_lookback:]
+       
+        if not self._interval in configs.pullback_intervals:
+            return []
+        
         signals = Pullback(
-            candles = self._candles,
+            candles = candles,
             interval = self._interval,
-            configs=self._configs.pullback_configs,
+            configs=configs,
             trend=self._trend,
-        ).get_trade_signals()
+        ).get_latest_signals()
         return signals
     
     def get_breakout_signals(self):
@@ -67,7 +73,7 @@ class Analyze:
             configs=self._configs.ultimate_setups_configs, 
             interval=self._interval
         )
-        if signal:
+        if signal and signal.get('direction') == self._trend:
             signals.append(signal)
         return signals
 
@@ -97,7 +103,9 @@ class Analyze:
         for key, value in strategy_intervals.items():
             if not self._interval in value:
                 continue
+            
             if signals:= strategies[key]():
+                
                 all_signals.extend(signals)
         for signal in all_signals:
             signal['utc_time'] = util.unix_to_utc(signal['trigger_candle']['time'])
