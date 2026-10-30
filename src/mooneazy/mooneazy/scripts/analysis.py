@@ -1,3 +1,4 @@
+import json 
 from typing import Callable
 from pydantic import validate_call
 from ..candles_api.candles_api import api as candles_api
@@ -176,6 +177,9 @@ def get_scalping_signals(
 
 
 
+if __name__ == "__main__":
+    signals = get_scalping_signals()
+    print(json.dumps(signals, indent=4))
 
 
 

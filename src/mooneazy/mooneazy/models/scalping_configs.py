@@ -65,6 +65,9 @@ class ScalpingAnalysisConfigs(BaseModel):
     model_config = ConfigDict(from_attributes=True)
      
     sr_pivot_lookback: int = 30
+    sr_limit: int = 230
+    sr_interval: str = '4h'
+
     supported_symbols:list = ['ETHUSDT', 'BTCUSDT', 'XAUUSDT']
     default_limit:int = 500
     ema_cross_periods:tuple = (8, 20)
@@ -74,7 +77,7 @@ class ScalpingAnalysisConfigs(BaseModel):
     levels_interval:str = '4h'
     levels_limit: int = 20
     levels_pivot_lookback: int = 5
-
+    
     strategy_intervals: dict = {
         'breakout': ['15m', '30m',],
         'ult_setups': ['30m', '4h'],
@@ -82,7 +85,10 @@ class ScalpingAnalysisConfigs(BaseModel):
         'heads_and_shoulders': ['30m']
     }
 
-    scalping_trend_intervals: list = ['1d']
+    ema_trend_intervals: list = ['1d']
+    ema_trend_limit: int = 200
+    ema_trend_periods: tuple = (8, 20)
+
     heads_and_shoulders_configs: HeadsAndShouldersConfigs = HeadsAndShouldersConfigs()
     pullback_configs: PullbackConfigs = PullbackConfigs()
     breakout_configs: BreakoutConfigs = BreakoutConfigs()
