@@ -131,10 +131,9 @@ class TrendProvider:
         candles = get_candles(
             symbol=self._symbol, 
             interval=self._configs.default_interval, 
-            limit=50 
+            limit=self._configs.default_fo_lookback 
         )
-        current_candles = candles[-20:-16]
-        return current_candles
+        return candles
 
     def fetch_candles(self):
         candles: list[list[dict]] = []
@@ -145,7 +144,7 @@ class TrendProvider:
         return candles
  
     def fetch_level_candles(self):
-        return get_candles(self._symbol, self._levels_interval)[:-2]
+        return get_candles(self._symbol, self._levels_interval)
 
     def get_sr_pivots(self):
         if self._sr_pivots:
@@ -184,12 +183,12 @@ class TrendProvider:
 
     def get_trend(self):
         return self.get_trend_from_sr() or self.get_trend_from_emas()
-    
 
 
 def get_trend(symbol, configs):
     trend = TrendProvider(symbol=symbol, configs=configs).get_trend()
     return trend
+
 
 if __name__ == "__main__":
     symbol = "ETHUSDT"
