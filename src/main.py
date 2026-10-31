@@ -17,7 +17,6 @@ def main(context):
         context.log(errors)
 
     try:
-        # update signals database and return latest_signals
         latest_signals = SignalsTable().add_signals(signals)
     except Exception as e:
         errors['db errors'] = traceback.format_exc()

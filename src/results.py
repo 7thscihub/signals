@@ -5,14 +5,23 @@ from .appwrite_api.messages import send_push_notifications
 
 TEST_SIGNAL_ID = '6ab244cc00375e76cf65'
 
+def return_latest_signals(context, table):
+    latest_signals = table.get_latest_signals(lates_limit)
+    context.res.json(latest_signals)
+
 
 def main(context):
     signal_id = context.req.query.get('id')
     table = SignalsTable()
+
+    latest_limit = int(context.req.query.get('latest'))
+    if latest_limit:
+        return_latest_signals(context, table)
+
     pending_signals = []
     results = []
     errors = []
-
+    
     try:
         if not signal_id:
             pending_signals = table.get_pending_signals()
@@ -27,5 +36,6 @@ def main(context):
         context.log(errors)
         return context.res.json(errors)
     return context.res.json(results)
+
 
 

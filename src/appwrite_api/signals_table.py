@@ -98,5 +98,18 @@ class SignalsTable:
         rows = response.rows
         return [row.to_dict() for row in rows]
 
+    def get_latest_signals(self, limit=20):
+        response = self.tablesDB.list_rows(
+                database_id=self.database_id,
+                table_id=self.table_id,
+                queries=[
+                    Query.order_asc("$createdAt"),
+                    Query.limit(limit)
+                ]
+            )
+        rows = response.rows
+        return [row.to_dict() for row in rows]
+
+
 
 
