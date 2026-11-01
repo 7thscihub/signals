@@ -24,7 +24,7 @@ def main(context):
     limit = context.req.query.get('latest')
     if limit:
         latest_signals = table.get_latest_signals(int(limit))
-        return context.res.json(latest_signals)
+        return context.res.json(latest_signals, 200, cors_headers)
 
     pending_signals = []
     results = []
