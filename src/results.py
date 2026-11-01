@@ -8,7 +8,7 @@ TEST_SIGNAL_ID = '6ab244cc00375e76cf65'
 
 def main(context):
     cors_headers = {
-        'Access-Control-Allow-Origin': '*',  # Allows localhost:8081, mobile simulators, and devices
+        'Access-Control-Allow-Origin': '*, localhost:8081',  # Allows localhost:8081, mobile simulators, and devices
         'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
         'Access-Control-Allow-Headers': 'Content-Type, Authorization, x-appwrite-project, x-appwrite-jwt, x-sdk-version',
         'Access-Control-Max-Age': '86400'    # Cache preflight response for 24 hours
@@ -43,7 +43,7 @@ def main(context):
         errors = traceback.format_exc()
         context.log(errors)
         return context.res.json(errors)
-    return context.res.json(results)
+    return context.res.json(results, 200, cors_headers)
 
 
 
