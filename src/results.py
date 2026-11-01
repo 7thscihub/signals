@@ -7,6 +7,17 @@ TEST_SIGNAL_ID = '6ab244cc00375e76cf65'
 
 
 def main(context):
+    cors_headers = {
+        'Access-Control-Allow-Origin': '*',  # Allows localhost:8081, mobile simulators, and devices
+        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization, x-appwrite-project, x-appwrite-jwt, x-sdk-version',
+        'Access-Control-Max-Age': '86400'    # Cache preflight response for 24 hours
+    }
+
+    # 2. Handle the browser preflight OPTIONS request
+    if context.req.method == 'OPTIONS':
+        return context.res.text('', 200, cors_headers)
+    
     signal_id = context.req.query.get('id')
     table = SignalsTable()
 
