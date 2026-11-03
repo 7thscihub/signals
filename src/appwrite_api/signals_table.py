@@ -103,7 +103,7 @@ class SignalsTable:
                 database_id=self.database_id,
                 table_id=self.table_id,
                 queries=[
-                    Query.order_asc("$createdAt"),
+                    Query.order_desc("$createdAt"),
                     Query.limit(limit)
                 ]
             )
