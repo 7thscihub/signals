@@ -21,7 +21,6 @@ A library of trading algorithms that are part of **Mooneazy** trading ecosystem.
 
 ## 📑 Table of Contents
 
-- [Overview](#-overview)
 - [System Architecture](#-system-architecture)
 - [Key Features](#-key-features)
 - [Strategy Engine](#-strategy-engine)
@@ -33,15 +32,6 @@ A library of trading algorithms that are part of **Mooneazy** trading ecosystem.
 - [Deployment Guide](#-deployment-guide)
 - [Screenshot Placement Checklist](#-screenshot-placement-checklist)
 
----
-
-## 📌 Overview
-
-The **Mooneazy Signals** service operates as a serverless backbone for algorithmic trade idea generation and tracking. Built on **Appwrite Functions**, it executes scheduled market analysis across top cryptocurrencies and commodities, identifies high-probability trading setups, logs active opportunities to an Appwrite database, and broadcasts instant push notifications to mobile clients.
-
-Furthermore, it features a **Results Engine** (`src/results.py`) that monitors pending signals over time, checks future candle price action to determine whether Take-Profit (TP) or Stop-Loss (SL) targets were reached, and resolves conflicts using ultra-fine 1-minute candle drill-downs.
-
----
 
 ## 🏗 System Architecture
 
