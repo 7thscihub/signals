@@ -99,14 +99,14 @@ flowchart TD
 
 ## ✨ Key Features
 
-1. **Multi-Strategy Quantitative Engine**:
-   - **Engulfing Breakout Strategy**: Momentum candle identification confirmed by EMA crossovers and Hull Moving Average (HMA 55).
-   - **Fibonacci Pullback Strategy**: Key retracements (0.382–0.70 Fib) within strong trending structures.
-   - **Head & Shoulders Strategy**: Reversal patterns identified via swing pivots and Fibonacci neckline alignment (0.80 Fib).
-   - **Ultimate Setups**: Higher Timeframe (HTF) trend alignment combining daily/4h market direction with Swing Failure Patterns (SFPs/fakeouts) and key level rejections.
+1. **Multi-Strategy Engine**:
+   - **Engulfing Breakout Strategy**: This is a strict breakout strategy that incorporated an engulfing breakout candle, momentum indicators (hull moving average(HMA 55), exponential moving average cross(EMA cross 8/20) and a high time frame trend or reversal considerations. An engulfing breakout candle, for the bullish scenario, is a candle that closes higher than the highest price within the previous five candles and touches the mid range of the previous five candles and at least 2 of the previous 5 candles must be bearish. This candle must also trigger a bullish cross of the 8/20 emas. To increase accuracy, the signal direction bust be in line with the higher time frame trend, usually the daily time frame. The inverse is true for the bearish case. 
+   - **Pullback Strategy**: The pullback strategy scans for fake out trade signals(SFP & FA) when price touches the first pivot formed after largest impulse in market structure that meets the following conditions. The pivot has to retrace between fib 0.3 and 0.7. The subsequent swing after the pivot has to reach fib 0.5 of the pivot's own impulse. SFP, swing failure pattern, for the bullish case, is when price touches a level and the candle body does not close below the level and the subsequent candle becomes bullish. A failed auction (FA) is when a few candles usually less than 5 closes below a level and then the fullowing candle reverses and crosses back and closes above the level. 
+   - **Head & Shoulders Strategy**: This is an ambitious heads and shoulders strategy that does not wait for the neck line to be crossed for a trade to qualify. Instead it waits for an SFP/FA signal at the left shoulder level  with the assumption that the right shoulder is forming. Since it is a reversal strategy and results in very many failed signals this iteration is only considered when it occurs on a very strong higher time frame support level. 
+   - **Ultimate Setups**: This strategy scans for SFP/FA signals at strong pivot levels that matches higher time frame trends. Withing this strategy a pivot a minimum look back right and look back left of 30 candles each. These pivots are identified and watched for price SFP/FA reaction. Reactions that defy the higher time frame are ignored.
 
 2. **Smart Active-Window Filtering**:
-   - Triggers are strictly validated to ensure they are actionable. Signals older than 3× candle intervals are discarded before notification dispatch.
+   - Triggers are strictly validated to ensure they are actionable. Trade alerts are sent within the next two candles. Once the third candlle is formed past the trigger candle the signal is considered stale.
 
 3. **Multi-Timeframe Conflict Resolution (Sub-Candle Logic)**:
    - When both Stop-Loss and Take-Profit price levels are touched within the same higher-timeframe candle (e.g. 15m or 30m), the engine automatically fetches **1-minute candles** to accurately establish chronological priority: did the trade hit TP or SL first?
