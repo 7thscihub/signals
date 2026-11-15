@@ -1,11 +1,11 @@
-# 🌙 Mooneazy Signals & Results Engine
+# 🌙 MOONEAZY SIGNALS
 
 [![Python Version](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/)
 [![Runtime](https://img.shields.io/badge/runtime-Appwrite%20Functions-F02E65.svg)](https://appwrite.io/)
 [![Validation](https://img.shields.io/badge/validation-Pydantic%20v2-E92063.svg)](https://docs.pydantic.dev/)
 [![Code Style](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
-A high-performance, serverless trading intelligence microservice built for the **Mooneazy** ecosystem. This project powers automated multi-timeframe market scanning, quantitative pattern detection, real-time push notification delivery, and automated trade outcome tracking with sub-candle resolution.
+A library of trading algorithms that are part of **Mooneazy** trading ecosystem. Mooneazy is a trading signals application that scans the crypto and commodities market for high quality trading signals and alerts the trader when there is a viable trade setup. Mooneazy Signals is the signal generating and results tracking part of the project. The other part is Mooneazy Mobile wich is the main UI for Mooneazy. A trade signal consists of the symbol, interval, entry price, stop loss(sl), two take profit levels(tp1 and tp2) direction, and signal type. After a signal alert is generated, the system tracks the subsequent candles to check the results of the signal. The signal is successful if both take profit levels are reached before the stop loss is hit. If one take profit is hit the signal is partially successful and if neighther is hit the signal is failed. If neighther tp is hit and the sl is not hit either, the signal is in pending state. The library can be easily bundled into an executable file using Pyinstaller and targeting the src/mooneazy/mooneazy.py file or deployed as an Appwrite serveless function by targeting the src/main.py file.
 
 ---
 
