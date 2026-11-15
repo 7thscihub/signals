@@ -139,7 +139,7 @@ The strategy layer lives in `src/mooneazy/mooneazy/` and provides modular quanti
 
 | Strategy | Primary Timeframes | Trend Filters | Target R:R (TP1 / TP2) | Pattern Characteristics |
 |---|---|---|---|---|
-| **Breakout** | `15m`, `30m` | HMA (55), EMA (8, 20) Cross | **1:2 / 1:5** | Engulfing candle breakout, volume confirmation, minimum score of 8, 2 opposite candles before break. |
+| **Breakout** | `15m`, `30m` | HMA (55), EMA (8, 20) Cross | **1:2 / 1:5** | Engulfing candle breakout, ema (8, 20) cross, minimum score of 8, 2 opposite candles before break. |
 | **Pullback** | `15m` | Higher Timeframe (4h) Trend | **1:2 / 1:5** | Swing pivot retracement into 0.382–0.70 Fibonacci zone with EMA 8/20 trend alignment. |
 | **Head & Shoulders** | `30m` | Swing Pivots | **1:2 / 5:1** | Structural neckline and shoulder geometry with 0.8 Fibonacci resistance/support retest. |
 | **Ultimate Setups** | `30m`, `4h` | Daily (1d) S/R & EMAs | **1:1.5 / 1:3** | Swing Failure Pattern (SFP), key liquidity pool fakeouts, and multi-timeframe level confirmation. |
